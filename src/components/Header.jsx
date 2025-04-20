@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import ThemeToggler from './ThemeToggler';
 
 const Header = () => {
   return (
@@ -7,25 +8,26 @@ const Header = () => {
         <Link to="/" className="logo">
           Tre<span>sit</span>
         </Link>
-        <nav>
+        <nav className="nav">
           <ul className="nav-links">
             <li>
-              <Link to="/" className="nav-link">
+              <NavLink to="/" className={({isActive}) => isActive ? "nav-link active" : "nav-link"} end>
                 Explore
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link to="/add-destination" className="nav-link">
+              <NavLink to="/add-destination" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
                 Add Destination
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link to="/travel-log" className="nav-link">
+              <NavLink to="/travel-log" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
                 My Travel Log
-              </Link>
+              </NavLink>
             </li>
           </ul>
         </nav>
+        <ThemeToggler />
       </div>
     </header>
   );

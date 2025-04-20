@@ -1,5 +1,5 @@
 :root {
-  /* Color Palette */
+  /* Color Palette - Light Theme */
   --primary-color: #3498db;
   --secondary-color: #2ecc71;
   --accent-color: #f39c12;
@@ -42,6 +42,29 @@
   --transition-slow: 0.5s ease;
 }
 
+/* Dark theme variables */
+[data-theme="dark"] {
+  --primary-color: #6c5ce7; /* Purple */
+  --secondary-color: #00b894; /* Mint */
+  --accent-color: #fdcb6e; /* Yellow */
+  --dark-color: #dfe6e9; /* Light gray for text on dark backgrounds */
+  --light-color: #b2bec3; /* Muted light color */
+  --danger-color: #ff7675; /* Softer red */
+  --success-color: #55efc4; /* Teal */
+  --visited-color: #55efc4; /* Teal */
+  --wishlist-color: #ffeaa7; /* Light yellow */
+  --text-color: #dfe6e9; /* Light gray */
+  --text-light: #a0a0a0; /* Medium gray */
+  --background-color: #2d3436; /* Dark gray */
+  --card-bg: #1e272e; /* Dark blue-gray */
+  --border-color: #485460; /* Medium dark gray */
+  
+  /* Box Shadow for dark mode */
+  --box-shadow-light: 0 2px 5px rgba(0, 0, 0, 0.3);
+  --box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.3);
+  --box-shadow-heavy: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -53,6 +76,7 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   line-height: 1.6;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -60,12 +84,13 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   margin-bottom: var(--spacing-md);
   color: var(--dark-color);
+  transition: color var(--transition-normal);
 }
 
 a {
   text-decoration: none;
   color: var(--primary-color);
-  transition: var(--transition-fast);
+  transition: color var(--transition-fast);
 }
 
 a:hover {
@@ -110,7 +135,7 @@ a:hover {
   border-radius: var(--border-radius-md);
   box-shadow: var(--box-shadow-light);
   overflow: hidden;
-  transition: var(--transition-normal);
+  transition: var(--transition-normal), transform var(--transition-normal);
 }
 
 .card:hover {
@@ -118,19 +143,41 @@ a:hover {
   transform: translateY(-5px);
 }
 
+/* Error message styling */
+.error-message {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--danger-color);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-lg);
+  border-left: 4px solid var(--danger-color);
+}
+
+/* Theme toggler */
+.theme-toggler {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs);
+  border-radius: 50%;
+  transition: background-color var(--transition-fast);
+  color: var(--light-color);
+}
+
+.theme-toggler:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-toggler .icon {
+  width: 24px;
+  height: 24px;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 var(--spacing-sm);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: #121212;
-    --card-bg: #1e1e1e;
-    --text-color: #f0f0f0;
-    --text-light: #aaa;
-    --border-color: #333;
-    --dark-color: #f0f0f0;
   }
 }
