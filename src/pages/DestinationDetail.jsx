@@ -7,6 +7,9 @@ import LoadingState from '../components/LoadingState';
 import ErrorHandler from '../components/ErrorHandler';
 import MapView from '../components/MapView';
 import StatusSelector from '../components/StatusSelector';
+import TravelPlanner from '../components/TravelPlanner';
+import TravelTips from '../components/TravelTips';
+import '../styles/DestinationDetail.css';
 
 const DestinationDetail = () => {
   const { id } = useParams();
@@ -85,7 +88,7 @@ const DestinationDetail = () => {
   if (!country) return <ErrorHandler error="Country not found" retry={() => navigate('/')} />;
 
   return (
-    <div className="destination-detail">
+    <div className="destination-detail container">
       <button className="back-button" onClick={() => navigate(-1)}>
         &larr; Back
       </button>
@@ -104,7 +107,7 @@ const DestinationDetail = () => {
 
       <div className="status-selector-container">
         <StatusSelector 
-          currentStatus={status} 
+          status={status}
           onStatusChange={handleStatusChange} 
         />
       </div>
@@ -172,6 +175,18 @@ const DestinationDetail = () => {
           />
         </div>
       </div>
+
+      <TravelTips
+        countryName={country.name.common}
+        region={country.region}
+      />
+      
+      {status && (
+        <TravelPlanner 
+          countryName={country.name.common}
+          countryCode={country.cca3} 
+        />
+      )}
     </div>
   );
 };
