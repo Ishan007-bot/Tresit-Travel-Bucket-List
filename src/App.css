@@ -150,9 +150,20 @@
   transition: background-color var(--transition-normal);
 }
 
+/* Status Badges */
 .badge-wishlist {
   background-color: var(--wishlist-color);
   color: var(--dark-color);
+}
+
+.badge-planning {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.badge-booked {
+  background-color: #3498db;
+  color: white;
 }
 
 .badge-visited {
@@ -163,6 +174,16 @@
 [data-theme="dark"] .badge-wishlist {
   background-color: var(--wishlist-color);
   color: #2d3436;  /* Dark text for contrast on yellow badge */
+}
+
+[data-theme="dark"] .badge-planning {
+  background-color: #9b59b6;
+  color: white;
+}
+
+[data-theme="dark"] .badge-booked {
+  background-color: #3498db;
+  color: white;
 }
 
 [data-theme="dark"] .badge-visited {
@@ -176,23 +197,67 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
+  min-height: 300px;
   width: 100%;
 }
 
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid var(--border-color);
-  border-top: 5px solid var(--primary-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.loading-animation {
+  position: relative;
+  width: 100px;
+  height: 100px;
   margin-bottom: var(--spacing-md);
+}
+
+.spinner-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.spinner {
+  width: 100%;
+  height: 100%;
+  border: 4px solid transparent;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+}
+
+.globe-container {
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  height: 60%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.globe {
+  width: 100%;
+  height: 100%;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+.loading-message {
+  color: var(--text-color);
+  font-size: 1rem;
+  margin-top: var(--spacing-md);
+  font-weight: 500;
 }
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(0.8); opacity: 0.5; }
 }
 
 /* Grid Layout */
@@ -627,4 +692,52 @@
 
 [data-theme="dark"] .btn:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Error Styles */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  margin: var(--spacing-lg) 0;
+  background-color: rgba(231, 76, 60, 0.1);
+  border-radius: var(--border-radius-md);
+  border-left: 4px solid var(--danger-color);
+  text-align: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error-icon {
+  width: 60px;
+  height: 60px;
+  color: var(--danger-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.error-message {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  margin-bottom: var(--spacing-md);
+  line-height: 1.6;
+}
+
+.retry-button {
+  margin-top: var(--spacing-sm);
+  background-color: var(--primary-color);
+}
+
+[data-theme="dark"] .error-container {
+  background-color: rgba(255, 118, 117, 0.1);
+}
+
+/* Status change buttons */
+.status-change-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 } 

@@ -23,10 +23,31 @@ export const TravelProvider = ({ children }) => {
     localStorage.setItem('tresit_destinations', JSON.stringify(savedDestinations));
   }, [savedDestinations]);
   
+  // Add a new destination
+  const addDestination = (destination) => {
+    setSavedDestinations(prev => [...prev, destination]);
+  };
+  
+  // Update an existing destination
+  const updateDestination = (index, updatedDestination) => {
+    setSavedDestinations(prev => {
+      const newDestinations = [...prev];
+      newDestinations[index] = updatedDestination;
+      return newDestinations;
+    });
+  };
+  
+  // Remove a destination
+  const removeDestination = (cca3) => {
+    setSavedDestinations(prev => prev.filter(destination => destination.cca3 !== cca3));
+  };
+  
   // Context value
   const value = {
     savedDestinations,
-    setSavedDestinations
+    addDestination,
+    updateDestination,
+    removeDestination
   };
   
   return (

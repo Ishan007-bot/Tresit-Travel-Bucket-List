@@ -1,34 +1,99 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTravel } from '../contexts/TravelContext';
-import { getAllCountries, getCountriesByRegion, searchCountries, sortCountries } from '../services/api';
+import * as dataService from '../services/dataService';
+import useFetch from '../hooks/useFetch';
 import DestinationCard from '../components/DestinationCard';
 import FilterBar from '../components/FilterBar';
-import Loading from '../components/Loading';
+import LoadingState from '../components/LoadingState';
+import ErrorHandler from '../components/ErrorHandler';
 
 const HomePage = () => {
   const { savedDestinations } = useTravel();
-  const [countries, setCountries] = useState([]);
+  
+  // State for countries and filtering
   const [filteredCountries, setFilteredCountries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [activeFilters, setActiveFilters] = useState({
+    search: '',
+    region: '',
+    sort: { criteria: 'name', order: 'asc' }
+  });
 
-  // Fetch all countries when component mounts
+  // Get all countries
+  const { data: countries, loading, error, execute: fetchCountries } = useFetch(
+    dataService.getAllCountries,
+    [],
+    true
+  );
+
+  // Update filtered countries when data or filters change
   useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        setLoading(true);
-        const data = await getAllCountries();
-        setCountries(data);
-        setFilteredCountries(data);
-        setLoading(false);
-      } catch (error) {
-        setError('Failed to load countries. Please try again later.');
-        setLoading(false);
-      }
-    };
+    if (!countries) return;
+    
+    let result = [...countries];
+    
+    // Filter by region if specified
+    if (activeFilters.region) {
+      const doFilter = async () => {
+        try {
+          const regionData = await dataService.getCountriesByRegion(activeFilters.region);
+          applyFiltersAndSort(regionData);
+        } catch (error) {
+          console.error("Error filtering by region:", error);
+          // Fallback to client-side filtering
+          const filtered = countries.filter(
+            country => country.region.toLowerCase() === activeFilters.region.toLowerCase()
+          );
+          applyFiltersAndSort(filtered);
+        }
+      };
+      
+      doFilter();
+      return;
+    }
+    
+    // Apply sorting
+    applyFiltersAndSort(result);
+  }, [countries, activeFilters.region, activeFilters.sort]);
 
-    fetchCountries();
-  }, []);
+  // Helper to apply sorting
+  const applyFiltersAndSort = useCallback((data) => {
+    if (!data) return;
+    
+    const { criteria, order } = activeFilters.sort;
+    const sorted = dataService.sortCountries(data, criteria, order);
+    setFilteredCountries(sorted);
+  }, [activeFilters.sort]);
+
+  // Handle search
+  const handleSearch = async (searchTerm) => {
+    setActiveFilters(prev => ({ ...prev, search: searchTerm }));
+    
+    try {
+      if (!searchTerm.trim()) {
+        // If search is cleared, reset to all countries
+        applyFiltersAndSort(countries);
+        return;
+      }
+      
+      const results = await dataService.searchCountries(searchTerm);
+      applyFiltersAndSort(results);
+    } catch (error) {
+      console.error("Error searching countries:", error);
+    }
+  };
+
+  // Handle region filter
+  const handleFilterRegion = (region) => {
+    setActiveFilters(prev => ({ ...prev, region }));
+  };
+
+  // Handle sorting
+  const handleSort = (criteria, order) => {
+    setActiveFilters(prev => ({ 
+      ...prev, 
+      sort: { criteria, order }
+    }));
+  };
 
   // Get saved status for each country
   const getSavedStatus = (cca3) => {
@@ -36,45 +101,14 @@ const HomePage = () => {
     return savedCountry ? savedCountry.status : null;
   };
 
-  // Handle search
-  const handleSearch = async (searchTerm) => {
-    try {
-      setLoading(true);
-      const searchResults = await searchCountries(searchTerm);
-      setFilteredCountries(searchResults);
-      setLoading(false);
-    } catch (error) {
-      setError('Error searching countries. Please try again.');
-      setLoading(false);
-    }
+  // Retry loading countries
+  const handleRetry = () => {
+    fetchCountries();
   };
 
-  // Handle region filter
-  const handleFilterRegion = async (region) => {
-    try {
-      setLoading(true);
-      if (region) {
-        const regionResults = await getCountriesByRegion(region);
-        setFilteredCountries(regionResults);
-      } else {
-        setFilteredCountries(countries);
-      }
-      setLoading(false);
-    } catch (error) {
-      setError(`Error filtering by region: ${region}. Please try again.`);
-      setLoading(false);
-    }
-  };
+  if (loading) return <LoadingState message="Discovering countries..." />;
 
-  // Handle sorting
-  const handleSort = (criteria, order) => {
-    const sortedCountries = sortCountries(filteredCountries, criteria, order);
-    setFilteredCountries(sortedCountries);
-  };
-
-  if (loading) return <Loading />;
-
-  if (error) return <div className="error-message">{error}</div>;
+  if (error) return <ErrorHandler error={error} retry={handleRetry} />;
 
   return (
     <div className="container">
@@ -90,6 +124,16 @@ const HomePage = () => {
       {filteredCountries.length === 0 ? (
         <div className="no-results">
           <p>No countries found matching your search criteria.</p>
+          <button className="btn" onClick={() => {
+            setActiveFilters({
+              search: '',
+              region: '',
+              sort: { criteria: 'name', order: 'asc' }
+            });
+            applyFiltersAndSort(countries);
+          }}>
+            Reset Filters
+          </button>
         </div>
       ) : (
         <div className="grid">

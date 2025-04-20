@@ -3,36 +3,26 @@ import { Link } from 'react-router-dom';
 import { useTravel } from '../contexts/TravelContext';
 
 const TravelLog = () => {
-  const { savedDestinations, setSavedDestinations } = useTravel();
+  const { savedDestinations, removeDestination, updateDestination } = useTravel();
   const [activeTab, setActiveTab] = useState('all');
   
   // Count wishlist and visited destinations
   const wishlistCount = savedDestinations.filter(dest => dest.status === 'wishlist').length;
   const visitedCount = savedDestinations.filter(dest => dest.status === 'visited').length;
+  const planningCount = savedDestinations.filter(dest => dest.status === 'planning').length;
+  const bookedCount = savedDestinations.filter(dest => dest.status === 'booked').length;
   
   // Filter destinations based on active tab
   const filteredDestinations = activeTab === 'all' 
     ? savedDestinations 
     : savedDestinations.filter(dest => dest.status === activeTab);
     
-  // Remove a destination
-  const removeDestination = (cca3) => {
-    setSavedDestinations(prev => prev.filter(dest => dest.cca3 !== cca3));
-  };
-  
-  // Change destination status (toggle between wishlist and visited)
-  const toggleStatus = (cca3) => {
-    setSavedDestinations(prev => 
-      prev.map(dest => {
-        if (dest.cca3 === cca3) {
-          return {
-            ...dest,
-            status: dest.status === 'wishlist' ? 'visited' : 'wishlist'
-          };
-        }
-        return dest;
-      })
-    );
+  // Change destination status
+  const changeStatus = (destination, newStatus) => {
+    const index = savedDestinations.findIndex(dest => dest.cca3 === destination.cca3);
+    if (index !== -1) {
+      updateDestination(index, { ...destination, status: newStatus });
+    }
   };
   
   return (
@@ -68,6 +58,18 @@ const TravelLog = () => {
           Wishlist
         </button>
         <button 
+          className={`tab-button ${activeTab === 'planning' ? 'active' : ''}`}
+          onClick={() => setActiveTab('planning')}
+        >
+          Planning
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'booked' ? 'active' : ''}`}
+          onClick={() => setActiveTab('booked')}
+        >
+          Booked
+        </button>
+        <button 
           className={`tab-button ${activeTab === 'visited' ? 'active' : ''}`}
           onClick={() => setActiveTab('visited')}
         >
@@ -95,20 +97,34 @@ const TravelLog = () => {
                   <span 
                     className={`status-badge badge-${dest.status}`}
                   >
-                    {dest.status === 'wishlist' ? 'Wishlist' : 'Visited'}
+                    {dest.status === 'wishlist' ? 'Wishlist' : 
+                     dest.status === 'planning' ? 'Planning' :
+                     dest.status === 'booked' ? 'Booked' : 'Visited'}
                   </span>
-                  <button 
-                    className="btn-link"
-                    onClick={() => toggleStatus(dest.cca3)}
-                  >
-                    {dest.status === 'wishlist' ? 'Mark as Visited' : 'Move to Wishlist'}
-                  </button>
-                  <button 
-                    className="btn-link remove"
-                    onClick={() => removeDestination(dest.cca3)}
-                  >
-                    Remove
-                  </button>
+                  <div className="status-change-buttons">
+                    {dest.status !== 'wishlist' && (
+                      <button 
+                        className="btn-link"
+                        onClick={() => changeStatus(dest, 'wishlist')}
+                      >
+                        Move to Wishlist
+                      </button>
+                    )}
+                    {dest.status !== 'visited' && (
+                      <button 
+                        className="btn-link"
+                        onClick={() => changeStatus(dest, 'visited')}
+                      >
+                        Mark as Visited
+                      </button>
+                    )}
+                    <button 
+                      className="btn-link remove"
+                      onClick={() => removeDestination(dest.cca3)}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
                 <Link to={`/country/${dest.cca3}`} className="btn">
                   View Details
