@@ -340,4 +340,7 @@ export const getMockCountriesByRegion = async (region) => {
 };
 
 // Flag to determine if we're using mock data
-export const USE_MOCK_DATA = true; // Set to true to use mock data instead of real API 
+export const USE_MOCK_DATA = false; // Set to false to use real API instead of mock data
+
+// Debug logs for mock data usage
+console.log('Mock data configuration loaded, USE_MOCK_DATA =', USE_MOCK_DATA); 

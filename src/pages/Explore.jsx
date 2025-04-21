@@ -22,31 +22,46 @@ const Explore = () => {
     const fetchCountries = async () => {
       try {
         setLoading(true);
+        console.log('Explore page: Starting to fetch countries...');
+        
         const data = await getAllCountries();
+        console.log('Explore page: Countries data received:', data ? `${data.length} countries` : 'No data');
         
         // Check if data is available
-        if (!data || data.length === 0) {
+        if (!data) {
+          console.error('Explore page: Data is null or undefined');
+          setError('No countries data available. Please try again later.');
+          setLoading(false);
+          return;
+        }
+        
+        if (data.length === 0) {
+          console.error('Explore page: Data is empty array');
           setError('No countries data available. Please try again later.');
           setLoading(false);
           return;
         }
         
         // Sort alphabetically
+        console.log('Explore page: Sorting countries alphabetically');
         const sortedCountries = data.sort((a, b) => {
-          const nameA = a.name.common || (typeof a.name === 'string' ? a.name : '');
-          const nameB = b.name.common || (typeof b.name === 'string' ? b.name : '');
+          const nameA = a.name?.common || (typeof a.name === 'string' ? a.name : '');
+          const nameB = b.name?.common || (typeof b.name === 'string' ? b.name : '');
           return nameA.localeCompare(nameB);
         });
         
+        console.log('Explore page: Setting countries in state');
         setCountries(sortedCountries);
         
         // Calculate total pages
-        setTotalPages(Math.ceil(sortedCountries.length / countriesPerPage));
+        const pages = Math.ceil(sortedCountries.length / countriesPerPage);
+        console.log(`Explore page: Setting total pages to ${pages}`);
+        setTotalPages(pages);
         
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching countries:', err);
-        setError('Failed to load countries. Please try again later.');
+        console.error('Explore page: Error fetching countries:', err);
+        setError(`Failed to load countries. Error: ${err.message}`);
         setLoading(false);
       }
     };

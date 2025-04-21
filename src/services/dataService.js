@@ -4,21 +4,35 @@ import * as mock from './mockData';
 // Using either mock data or real API based on environment
 const useMockData = mock.USE_MOCK_DATA || process.env.NODE_ENV === 'test';
 
+// Debug log to check which data source is being used
+console.log('Data service initialized, using mock data:', useMockData, 'ENV:', process.env.NODE_ENV);
+
 /**
  * Get all countries
  */
 export const getAllCountries = async () => {
   try {
+    console.log('getAllCountries called, using mock data:', useMockData);
+    
     if (useMockData) {
-      return await mock.getMockCountries();
+      console.log('Fetching mock countries data');
+      const mockData = await mock.getMockCountries();
+      console.log(`Mock data fetched successfully, received ${mockData.length} countries`);
+      return mockData;
     }
     
     try {
-      return await api.getAllCountries();
+      console.log('Fetching countries from API');
+      const apiData = await api.getAllCountries();
+      console.log(`API data fetched successfully, received ${apiData.length} countries`);
+      return apiData;
     } catch (apiError) {
       console.error('API error getting countries, falling back to mock data:', apiError);
       // Fallback to mock data if API fails
-      return await mock.getMockCountries();
+      console.log('Falling back to mock data after API error');
+      const fallbackData = await mock.getMockCountries();
+      console.log(`Fallback data fetched, received ${fallbackData.length} countries`);
+      return fallbackData;
     }
   } catch (error) {
     console.error('Error getting all countries:', error);
