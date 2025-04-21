@@ -119,6 +119,26 @@ const DestinationDetail = () => {
     fetchCountryData();
   }, [id, savedDestinations]);
 
+  // Add global event listener to prevent Enter key from submitting forms
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Only prevent default for Enter outside of textarea elements with shift key
+      if (e.key === 'Enter' && 
+          e.target.tagName !== 'TEXTAREA' && 
+          e.target.tagName !== 'BUTTON') {
+        e.preventDefault();
+      }
+    };
+
+    // Add event listener
+    document.addEventListener('keydown', handleKeyDown);
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
     
@@ -222,7 +242,15 @@ const DestinationDetail = () => {
   const flagAlt = country.flags?.alt || `Flag of ${countryName}`;
 
   return (
-    <div className="destination-detail container">
+    <div 
+      className="destination-detail container"
+      onSubmit={(e) => {
+        // This is a safeguard in case there's any implicit form submission happening
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }}
+    >
       <button className="back-button" onClick={() => navigate(-1)}>
         &larr; Back
       </button>
@@ -299,12 +327,30 @@ const DestinationDetail = () => {
           {status && (
             <div className="info-section">
               <h3>Travel Notes</h3>
-              <textarea
-                className="notes-textarea"
-                placeholder="Add your travel notes here..."
-                value={notes}
-                onChange={handleNotesChange}
-              />
+              <div className="notes-container">
+                <textarea
+                  className="notes-textarea"
+                  placeholder="Add your travel notes here..."
+                  value={notes}
+                  onChange={handleNotesChange}
+                  onKeyPress={(e) => {
+                    // This is a more aggressive approach to prevent form submission
+                    if (e.key === 'Enter') {
+                      e.stopPropagation(); // Stop event propagation
+                      return false; // Prevent default in older browsers
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    // Double protection against Enter key triggering navigation
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault(); // Prevent default behavior
+                      e.stopPropagation(); // Stop event propagation
+                      return false; // Prevent default in older browsers
+                    }
+                  }}
+                />
+                <p className="notes-help">Use Shift+Enter for new lines. Notes are saved automatically.</p>
+              </div>
             </div>
           )}
         </div>

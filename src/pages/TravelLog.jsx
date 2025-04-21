@@ -174,7 +174,7 @@ const TravelLog = () => {
                       </button>
                     </div>
                   </div>
-                  <Link to={`/country/${dest.cca3}`} className="btn">
+                  <Link to={`/destination/${dest.cca3}`} className="btn">
                     View Details
                   </Link>
                 </div>

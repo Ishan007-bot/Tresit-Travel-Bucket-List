@@ -38,7 +38,7 @@ const DestinationCard = ({ country, savedStatus }) => {
               savedStatus === 'booked' ? 'Booked' : 'Visited'}
             </span>
           )}
-          <Link to={`/country/${cca3}`} className={`btn ${isHovered ? 'animate-float' : ''}`}>
+          <Link to={`/destination/${cca3}`} className={`btn ${isHovered ? 'animate-float' : ''}`}>
             View Details
           </Link>
         </div>

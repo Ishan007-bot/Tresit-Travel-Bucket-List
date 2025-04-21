@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTravel } from '../contexts/TravelContext';
 import { getAllCountries } from '../services/dataService';
@@ -9,8 +9,13 @@ import '../styles/Explore.css';
 const Explore = () => {
   const { savedDestinations } = useTravel();
   const [countries, setCountries] = useState([]);
+  const [filteredCountries, setFilteredCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('');
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,13 +50,15 @@ const Explore = () => {
         // Sort alphabetically
         console.log('Explore page: Sorting countries alphabetically');
         const sortedCountries = data.sort((a, b) => {
-          const nameA = a.name?.common || (typeof a.name === 'string' ? a.name : '');
-          const nameB = b.name?.common || (typeof b.name === 'string' ? b.name : '');
+          // Make sure nameA and nameB are strings and never undefined
+          const nameA = (a.name?.common || (typeof a.name === 'string' ? a.name : '')) || '';
+          const nameB = (b.name?.common || (typeof b.name === 'string' ? b.name : '')) || '';
           return nameA.localeCompare(nameB);
         });
         
         console.log('Explore page: Setting countries in state');
         setCountries(sortedCountries);
+        setFilteredCountries(sortedCountries);
         
         // Calculate total pages
         const pages = Math.ceil(sortedCountries.length / countriesPerPage);
@@ -69,6 +76,64 @@ const Explore = () => {
     fetchCountries();
   }, [countriesPerPage]);
 
+  // Get unique regions for filter dropdown
+  const regions = useMemo(() => {
+    const regionSet = new Set();
+    countries.forEach(country => {
+      if (country.region) {
+        regionSet.add(country.region);
+      }
+    });
+    return ['', ...Array.from(regionSet)].sort();
+  }, [countries]);
+
+  // Filter countries based on search query and selected region
+  useEffect(() => {
+    if (!countries.length) return;
+    
+    // Reset to page 1 when filters change
+    setCurrentPage(1);
+    
+    let result = [...countries];
+    
+    // Apply region filter
+    if (selectedRegion) {
+      result = result.filter(country => 
+        country.region === selectedRegion
+      );
+    }
+    
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(country => {
+        // Make sure name is never undefined or null
+        const name = (country.name?.common || (typeof country.name === 'string' ? country.name : '')) || '';
+        // Make sure capital is never undefined or null
+        const capital = (country.capital ? 
+          (Array.isArray(country.capital) ? country.capital[0] : country.capital) : '') || '';
+        
+        return (
+          name.toLowerCase().includes(query) || 
+          capital.toLowerCase().includes(query)
+        );
+      });
+    }
+    
+    setFilteredCountries(result);
+    setTotalPages(Math.ceil(result.length / countriesPerPage));
+  }, [searchQuery, selectedRegion, countries, countriesPerPage]);
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+  
+  // Handle region selection change
+  const handleRegionChange = (e) => {
+    setSelectedRegion(e.target.value);
+  };
+
   // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -76,11 +141,17 @@ const Explore = () => {
     window.scrollTo(0, 0);
   };
   
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedRegion('');
+  };
+  
   // Get current countries for current page
   const getCurrentCountries = () => {
     const indexOfLastCountry = currentPage * countriesPerPage;
     const indexOfFirstCountry = indexOfLastCountry - countriesPerPage;
-    return countries.slice(indexOfFirstCountry, indexOfLastCountry);
+    return filteredCountries.slice(indexOfFirstCountry, indexOfLastCountry);
   };
   
   // Get saved status for a country
@@ -113,6 +184,11 @@ const Explore = () => {
     }
   };
   
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    // The search is already handled by the onChange event of the input
+  };
+  
   if (loading) return <Loading message="Loading countries..." />;
   
   if (error) return <div className="error-message">{error}</div>;
@@ -126,70 +202,119 @@ const Explore = () => {
         <p>Discover countries from around the world and add them to your travel bucket list.</p>
       </div>
       
-      <div className="countries-grid">
-        {currentCountries.map((country) => {
-          const countryId = country.cca3 || country.alpha3Code;
-          const countryName = country.name.common || 
-                             (typeof country.name === 'string' ? country.name : 'Unknown');
-          const flagUrl = country.flags?.png || 
-                         country.flags?.svg || 
-                         country.flag || 
-                         `https://flagcdn.com/w320/${countryId.toLowerCase()}.png`;
-          const capital = country.capital ? 
-                          (Array.isArray(country.capital) ? country.capital[0] : country.capital) : 
-                          'Unknown';
-          const region = country.region || 'Unknown';
-          const savedStatus = getSavedStatus(countryId);
-                          
-          return (
-            <div key={countryId} className="country-card card">
-              <div className="img-container">
-                <img 
-                  src={flagUrl} 
-                  alt={`Flag of ${countryName}`} 
-                  className="country-img" 
-                />
-              </div>
-              <div className="country-content">
-                <h2 className="country-title">{countryName}</h2>
-                <div className="country-details">
-                  <p><strong>Capital:</strong> {capital}</p>
-                  <p><strong>Region:</strong> {region}</p>
-                  {country.population && (
-                    <p><strong>Population:</strong> {country.population.toLocaleString()}</p>
-                  )}
-                </div>
-                <div className="country-footer">
-                  {savedStatus && (
-                    <span className={`status-badge ${getStatusBadgeClass(savedStatus)}`}>
-                      {getStatusLabel(savedStatus)}
-                    </span>
-                  )}
-                  <Link 
-                    to={`/destination/${countryId}`} 
-                    className="btn view-btn"
-                  >
-                    View Details
-                  </Link>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      <div className="pagination-container">
-        <Pagination 
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+      <div className="explore-filters">
+        <form onSubmit={handleSearchSubmit} className="search-bar">
+          <input
+            type="text"
+            placeholder="Search by country or capital..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="search-input"
+          />
+        </form>
         
-        <div className="page-info">
-          Showing {currentCountries.length} of {countries.length} countries
-          (Page {currentPage} of {totalPages})
+        <div className="filters">
+          <select 
+            value={selectedRegion} 
+            onChange={handleRegionChange}
+            className="region-select"
+          >
+            <option value="">All Regions</option>
+            {regions.slice(1).map(region => (
+              <option key={region} value={region}>
+                {region}
+              </option>
+            ))}
+          </select>
+          
+          {(searchQuery || selectedRegion) && (
+            <button 
+              className="clear-filters-btn" 
+              onClick={clearFilters}
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
       </div>
+      
+      {filteredCountries.length === 0 ? (
+        <div className="no-results">
+          <p>No countries found matching your search criteria.</p>
+          <button className="btn" onClick={clearFilters}>Clear Filters</button>
+        </div>
+      ) : (
+        <>
+          <div className="countries-grid">
+            {currentCountries.map((country, index) => {
+              // Skip rendering if country is null or undefined
+              if (!country) return null;
+              
+              const countryId = country.cca3 || country.alpha3Code || '';
+              const countryName = (country.name?.common || 
+                                 (typeof country.name === 'string' ? country.name : 'Unknown')) || 'Unknown';
+              const flagUrl = country.flags?.png || 
+                             country.flags?.svg || 
+                             country.flag || 
+                             (countryId ? `https://flagcdn.com/w320/${countryId.toLowerCase()}.png` : 'https://via.placeholder.com/320x213?text=No+Flag');
+              const capital = (country.capital ? 
+                              (Array.isArray(country.capital) ? country.capital[0] : country.capital) : 
+                              'Unknown') || 'Unknown';
+              const region = country.region || 'Unknown';
+              const savedStatus = countryId ? getSavedStatus(countryId) : null;
+                              
+              return (
+                <div key={countryId || `country-${index}`} className="country-card card">
+                  <div className="img-container">
+                    <img 
+                      src={flagUrl} 
+                      alt={`Flag of ${countryName}`} 
+                      className="country-img" 
+                    />
+                  </div>
+                  <div className="country-content">
+                    <h2 className="country-title">{countryName}</h2>
+                    <div className="country-details">
+                      <p><strong>Capital:</strong> {capital}</p>
+                      <p><strong>Region:</strong> {region}</p>
+                      {country.population && (
+                        <p><strong>Population:</strong> {country.population.toLocaleString()}</p>
+                      )}
+                    </div>
+                    <div className="country-footer">
+                      {savedStatus && (
+                        <span className={`status-badge ${getStatusBadgeClass(savedStatus)}`}>
+                          {getStatusLabel(savedStatus)}
+                        </span>
+                      )}
+                      <Link 
+                        to={`/destination/${countryId}`} 
+                        className="btn view-btn"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
+          <div className="pagination-container">
+            <Pagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            
+            <div className="page-info">
+              Showing {currentCountries.length} of {filteredCountries.length} countries
+              {countries.length !== filteredCountries.length && ` (filtered from ${countries.length})`}
+              (Page {currentPage} of {totalPages})
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
