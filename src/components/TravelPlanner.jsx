@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useTravel } from '../contexts/TravelContext';
 import '../styles/TravelPlanner.css';
@@ -21,23 +21,33 @@ const TravelPlanner = ({ countryName, countryCode }) => {
   const [newActivity, setNewActivity] = useState('');
   const [selectedDay, setSelectedDay] = useState(1);
 
-  // Load saved travel plans
-  useEffect(() => {
-    const savedBudget = getTravelPlan(countryCode, 'budget');
-    if (savedBudget) {
-      setBudget(savedBudget);
-    }
+  // Memoize the function to get travel plans to prevent re-renders
+  const getPlans = useCallback(() => {
+    try {
+      // Load saved travel plans
+      const savedBudget = getTravelPlan(countryCode, 'budget');
+      if (savedBudget) {
+        setBudget(savedBudget);
+      }
 
-    const savedPackingItems = getTravelPlan(countryCode, 'packingItems');
-    if (savedPackingItems) {
-      setPackingItems(savedPackingItems);
-    }
+      const savedPackingItems = getTravelPlan(countryCode, 'packingItems');
+      if (savedPackingItems) {
+        setPackingItems(savedPackingItems);
+      }
 
-    const savedItinerary = getTravelPlan(countryCode, 'itinerary');
-    if (savedItinerary) {
-      setItineraryDays(savedItinerary);
+      const savedItinerary = getTravelPlan(countryCode, 'itinerary');
+      if (savedItinerary) {
+        setItineraryDays(savedItinerary);
+      }
+    } catch (error) {
+      console.error('Error loading travel plans:', error);
     }
   }, [countryCode, getTravelPlan]);
+
+  // Load saved travel plans
+  useEffect(() => {
+    getPlans();
+  }, [getPlans]);
 
   // Calculate total budget
   const totalBudget = Object.values(budget).reduce((sum, item) => sum + Number(item), 0);

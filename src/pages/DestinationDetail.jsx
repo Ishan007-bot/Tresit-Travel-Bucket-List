@@ -2,39 +2,122 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTravel } from '../contexts/TravelContext';
 import * as dataService from '../services/dataService';
-import useFetch from '../hooks/useFetch';
 import Loading from '../components/Loading';
-import MapView from '../components/MapView';
 import StatusSelector from '../components/StatusSelector';
-import TravelPlanner from '../components/TravelPlanner';
-import TravelTips from '../components/TravelTips';
 import '../styles/DestinationDetail.css';
+import '../styles/StaticComponents.css';
+
+// Simple static component to display a map placeholder
+const StaticMapView = ({ countryName, latlng }) => {
+  const lat = latlng?.[0];
+  const lng = latlng?.[1];
+  
+  return (
+    <div className="map-view">
+      <div className="map-fallback">
+        <div className="static-map">
+          <div className="map-placeholder">
+            <h3>{countryName}</h3>
+            {lat && lng && (
+              <p className="coordinates">Coordinates: {lat.toFixed(2)}°, {lng.toFixed(2)}°</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Static travel tips component
+const StaticTravelTips = ({ countryName }) => {
+  return (
+    <div className="travel-tips">
+      <h3>Travel Tips for {countryName}</h3>
+      <ul className="tips-list">
+        <li className="tip-item">
+          <span className="tip-icon">💡</span>
+          <span className="tip-text">Keep a digital copy of your passport and travel documents.</span>
+        </li>
+        <li className="tip-item">
+          <span className="tip-icon">💡</span>
+          <span className="tip-text">Learn a few basic phrases in the local language.</span>
+        </li>
+        <li className="tip-item">
+          <span className="tip-icon">💡</span>
+          <span className="tip-text">Research local customs and etiquette before arrival.</span>
+        </li>
+        <li className="tip-item">
+          <span className="tip-icon">💡</span>
+          <span className="tip-text">Register with your country's embassy before travel.</span>
+        </li>
+        <li className="tip-item">
+          <span className="tip-icon">💡</span>
+          <span className="tip-text">Purchase travel insurance that covers medical emergencies.</span>
+        </li>
+      </ul>
+    </div>
+  );
+};
+
+// Simple static budget planner component
+const StaticBudgetPlanner = ({ countryName }) => {
+  return (
+    <div className="travel-planner">
+      <h2>Travel Planner for {countryName}</h2>
+      <div className="planner-tabs">
+        <button className="tab-button active">Budget</button>
+        <button className="tab-button">Packing List</button>
+        <button className="tab-button">Itinerary</button>
+      </div>
+      <div className="tab-content">
+        <div className="budget-panel">
+          <div className="budget-header">
+            <h3>Trip Budget</h3>
+            <p className="budget-total">To set your budget, save this country to your travel list first.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const DestinationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { savedDestinations, addDestination, updateDestination } = useTravel();
+  const [country, setCountry] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [status, setStatus] = useState(null);
   const [notes, setNotes] = useState('');
 
-  // Fetch country details
-  const { 
-    data: country, 
-    loading, 
-    error, 
-    retry: retryFetch 
-  } = useFetch(() => dataService.getCountryByCode(id), [id]);
-
-  // Check if country is in saved destinations
+  // Single effect to fetch data and initialize state
   useEffect(() => {
-    if (!country) return;
+    const fetchCountryData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch country data
+        const data = await dataService.getCountryByCode(id);
+        setCountry(data);
+        
+        // Check if country is in saved destinations
+        const savedCountry = savedDestinations.find(dest => dest.cca3 === id);
+        if (savedCountry) {
+          setStatus(savedCountry.status);
+          setNotes(savedCountry.notes || '');
+        }
+        
+        setLoading(false);
+      } catch (err) {
+        console.error('Error loading country data:', err);
+        setError(err);
+        setLoading(false);
+      }
+    };
     
-    const savedCountry = savedDestinations.find(dest => dest.cca3 === id);
-    if (savedCountry) {
-      setStatus(savedCountry.status);
-      setNotes(savedCountry.notes || '');
-    }
-  }, [country, savedDestinations, id]);
+    fetchCountryData();
+  }, [id, savedDestinations]);
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
@@ -104,9 +187,6 @@ const DestinationDetail = () => {
         <h2>Error Loading Country</h2>
         <p className="error-message">{error.message || 'Failed to load country details.'}</p>
         <div className="error-actions">
-          <button className="btn retry-button" onClick={retryFetch}>
-            Retry
-          </button>
           <button className="btn" onClick={() => navigate(-1)}>
             Go Back
           </button>
@@ -230,25 +310,16 @@ const DestinationDetail = () => {
         </div>
 
         <div className="map-container">
-          <MapView 
-            latitude={country.latlng?.[0]} 
-            longitude={country.latlng?.[1]} 
-            countryName={countryName} 
+          <StaticMapView 
+            countryName={countryName}
+            latlng={country.latlng}
           />
         </div>
       </div>
 
-      <TravelTips
-        countryName={countryName}
-        region={country.region || ''}
-      />
+      <StaticTravelTips countryName={countryName} />
       
-      {status && (
-        <TravelPlanner 
-          countryName={countryName}
-          countryCode={id} 
-        />
-      )}
+      {status && <StaticBudgetPlanner countryName={countryName} />}
     </div>
   );
 };
