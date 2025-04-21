@@ -6,6 +6,7 @@ import DestinationCard from '../components/DestinationCard';
 import FilterBar from '../components/FilterBar';
 import LoadingState from '../components/LoadingState';
 import ErrorHandler from '../components/ErrorHandler';
+import Pagination from '../components/Pagination';
 
 const HomePage = () => {
   const { savedDestinations } = useTravel();
@@ -17,6 +18,12 @@ const HomePage = () => {
     region: '',
     sort: { criteria: 'name', order: 'asc' }
   });
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [countriesPerPage] = useState(12); // Show 12 countries per page
+  const [displayedCountries, setDisplayedCountries] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Get all countries
   const { data: countries, loading, error, execute: fetchCountries } = useFetch(
@@ -62,7 +69,34 @@ const HomePage = () => {
     const { criteria, order } = activeFilters.sort;
     const sorted = dataService.sortCountries(data, criteria, order);
     setFilteredCountries(sorted);
+    setCurrentPage(1); // Reset to first page when filters change
   }, [activeFilters.sort]);
+  
+  // Update pagination when filtered countries change
+  useEffect(() => {
+    if (!filteredCountries.length) {
+      setDisplayedCountries([]);
+      setTotalPages(1);
+      return;
+    }
+    
+    // Calculate total pages
+    const calculatedTotalPages = Math.ceil(filteredCountries.length / countriesPerPage);
+    setTotalPages(calculatedTotalPages);
+    
+    // Make sure current page is valid
+    const validPage = Math.min(currentPage, calculatedTotalPages);
+    if (validPage !== currentPage) {
+      setCurrentPage(validPage);
+    }
+    
+    // Get countries for current page
+    const indexOfLastCountry = currentPage * countriesPerPage;
+    const indexOfFirstCountry = indexOfLastCountry - countriesPerPage;
+    const currentCountries = filteredCountries.slice(indexOfFirstCountry, indexOfLastCountry);
+    
+    setDisplayedCountries(currentCountries);
+  }, [filteredCountries, currentPage, countriesPerPage]);
 
   // Handle search
   const handleSearch = async (searchTerm) => {
@@ -93,6 +127,11 @@ const HomePage = () => {
       ...prev, 
       sort: { criteria, order }
     }));
+  };
+  
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   // Get saved status for each country
@@ -136,15 +175,30 @@ const HomePage = () => {
           </button>
         </div>
       ) : (
-        <div className="grid">
-          {filteredCountries.map((country) => (
-            <DestinationCard 
-              key={country.cca3} 
-              country={country} 
-              savedStatus={getSavedStatus(country.cca3)} 
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid">
+            {displayedCountries.map((country) => (
+              <DestinationCard 
+                key={country.cca3} 
+                country={country} 
+                savedStatus={getSavedStatus(country.cca3)} 
+              />
+            ))}
+          </div>
+          
+          <Pagination 
+            currentPage={currentPage} 
+            totalPages={totalPages} 
+            onPageChange={handlePageChange} 
+          />
+          
+          <div className="page-info">
+            Showing {displayedCountries.length} of {filteredCountries.length} countries
+            {filteredCountries.length > countriesPerPage && (
+              <span> (Page {currentPage} of {totalPages})</span>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

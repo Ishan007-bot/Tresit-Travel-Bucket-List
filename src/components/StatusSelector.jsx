@@ -1,4 +1,7 @@
+import React from 'react';
 import PropTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircle, faClock, faCheck, faTimes, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import '../styles/StatusSelector.css';
 
 const StatusSelector = ({ status, onStatusChange }) => {

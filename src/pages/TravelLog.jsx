@@ -1,10 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTravel } from '../contexts/TravelContext';
+import Pagination from '../components/Pagination';
 
 const TravelLog = () => {
   const { savedDestinations, removeDestination, updateDestination } = useTravel();
   const [activeTab, setActiveTab] = useState('all');
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [destinationsPerPage] = useState(8); // Show 8 destinations per page
+  const [displayedDestinations, setDisplayedDestinations] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
   
   // Count wishlist and visited destinations
   const wishlistCount = savedDestinations.filter(dest => dest.status === 'wishlist').length;
@@ -16,6 +23,32 @@ const TravelLog = () => {
   const filteredDestinations = activeTab === 'all' 
     ? savedDestinations 
     : savedDestinations.filter(dest => dest.status === activeTab);
+  
+  // Update pagination when filtered destinations change
+  useEffect(() => {
+    if (!filteredDestinations.length) {
+      setDisplayedDestinations([]);
+      setTotalPages(1);
+      return;
+    }
+    
+    // Calculate total pages
+    const calculatedTotalPages = Math.ceil(filteredDestinations.length / destinationsPerPage);
+    setTotalPages(calculatedTotalPages);
+    
+    // Make sure current page is valid
+    const validPage = Math.min(currentPage, calculatedTotalPages);
+    if (validPage !== currentPage) {
+      setCurrentPage(validPage);
+    }
+    
+    // Get destinations for current page
+    const indexOfLastDestination = currentPage * destinationsPerPage;
+    const indexOfFirstDestination = indexOfLastDestination - destinationsPerPage;
+    const currentDestinations = filteredDestinations.slice(indexOfFirstDestination, indexOfLastDestination);
+    
+    setDisplayedDestinations(currentDestinations);
+  }, [filteredDestinations, currentPage, destinationsPerPage]);
     
   // Change destination status
   const changeStatus = (destination, newStatus) => {
@@ -23,6 +56,17 @@ const TravelLog = () => {
     if (index !== -1) {
       updateDestination(index, { ...destination, status: newStatus });
     }
+  };
+  
+  // Handle tab change
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCurrentPage(1); // Reset to first page when tab changes
+  };
+  
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
   
   return (
@@ -47,31 +91,31 @@ const TravelLog = () => {
       <div className="travel-log-tabs">
         <button 
           className={`tab-button ${activeTab === 'all' ? 'active' : ''}`}
-          onClick={() => setActiveTab('all')}
+          onClick={() => handleTabChange('all')}
         >
           All Countries
         </button>
         <button 
           className={`tab-button ${activeTab === 'wishlist' ? 'active' : ''}`}
-          onClick={() => setActiveTab('wishlist')}
+          onClick={() => handleTabChange('wishlist')}
         >
           Wishlist
         </button>
         <button 
           className={`tab-button ${activeTab === 'planning' ? 'active' : ''}`}
-          onClick={() => setActiveTab('planning')}
+          onClick={() => handleTabChange('planning')}
         >
           Planning
         </button>
         <button 
           className={`tab-button ${activeTab === 'booked' ? 'active' : ''}`}
-          onClick={() => setActiveTab('booked')}
+          onClick={() => handleTabChange('booked')}
         >
           Booked
         </button>
         <button 
           className={`tab-button ${activeTab === 'visited' ? 'active' : ''}`}
-          onClick={() => setActiveTab('visited')}
+          onClick={() => handleTabChange('visited')}
         >
           Visited
         </button>
@@ -83,56 +127,71 @@ const TravelLog = () => {
           <Link to="/" className="btn">Explore Countries</Link>
         </div>
       ) : (
-        <div className="saved-countries-grid">
-          {filteredDestinations.map(dest => (
-            <div key={dest.cca3} className="saved-country-card card">
-              <img 
-                src={dest.flag} 
-                alt={`Flag of ${dest.name}`} 
-                className="saved-country-img" 
-              />
-              <div className="saved-country-content">
-                <h3>{dest.name}</h3>
-                <div className="saved-country-actions">
-                  <span 
-                    className={`status-badge badge-${dest.status}`}
-                  >
-                    {dest.status === 'wishlist' ? 'Wishlist' : 
-                     dest.status === 'planning' ? 'Planning' :
-                     dest.status === 'booked' ? 'Booked' : 'Visited'}
-                  </span>
-                  <div className="status-change-buttons">
-                    {dest.status !== 'wishlist' && (
-                      <button 
-                        className="btn-link"
-                        onClick={() => changeStatus(dest, 'wishlist')}
-                      >
-                        Move to Wishlist
-                      </button>
-                    )}
-                    {dest.status !== 'visited' && (
-                      <button 
-                        className="btn-link"
-                        onClick={() => changeStatus(dest, 'visited')}
-                      >
-                        Mark as Visited
-                      </button>
-                    )}
-                    <button 
-                      className="btn-link remove"
-                      onClick={() => removeDestination(dest.cca3)}
+        <>
+          <div className="saved-countries-grid">
+            {displayedDestinations.map(dest => (
+              <div key={dest.cca3} className="saved-country-card card">
+                <img 
+                  src={dest.flag} 
+                  alt={`Flag of ${dest.name}`} 
+                  className="saved-country-img" 
+                />
+                <div className="saved-country-content">
+                  <h3>{dest.name}</h3>
+                  <div className="saved-country-actions">
+                    <span 
+                      className={`status-badge badge-${dest.status}`}
                     >
-                      Remove
-                    </button>
+                      {dest.status === 'wishlist' ? 'Wishlist' : 
+                       dest.status === 'planning' ? 'Planning' :
+                       dest.status === 'booked' ? 'Booked' : 'Visited'}
+                    </span>
+                    <div className="status-change-buttons">
+                      {dest.status !== 'wishlist' && (
+                        <button 
+                          className="btn-link"
+                          onClick={() => changeStatus(dest, 'wishlist')}
+                        >
+                          Move to Wishlist
+                        </button>
+                      )}
+                      {dest.status !== 'visited' && (
+                        <button 
+                          className="btn-link"
+                          onClick={() => changeStatus(dest, 'visited')}
+                        >
+                          Mark as Visited
+                        </button>
+                      )}
+                      <button 
+                        className="btn-link remove"
+                        onClick={() => removeDestination(dest.cca3)}
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
+                  <Link to={`/country/${dest.cca3}`} className="btn">
+                    View Details
+                  </Link>
                 </div>
-                <Link to={`/country/${dest.cca3}`} className="btn">
-                  View Details
-                </Link>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+          
+          <Pagination 
+            currentPage={currentPage} 
+            totalPages={totalPages} 
+            onPageChange={handlePageChange} 
+          />
+          
+          <div className="page-info">
+            Showing {displayedDestinations.length} of {filteredDestinations.length} destinations
+            {filteredDestinations.length > destinationsPerPage && (
+              <span> (Page {currentPage} of {totalPages})</span>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

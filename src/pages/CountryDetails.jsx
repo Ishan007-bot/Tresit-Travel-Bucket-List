@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getCountryByCode } from '../services/api';
 import SaveButtons from '../components/SaveButtons';
 import Loading from '../components/Loading';
+import { useTravel } from '../contexts/TravelContext';
 
 const CountryDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { savedDestinations } = useTravel();
   const [country, setCountry] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,33 +17,64 @@ const CountryDetails = () => {
     const fetchCountryDetails = async () => {
       try {
         setLoading(true);
+        
+        // First check if we already have this country in our saved destinations
+        const savedCountry = savedDestinations.find(dest => dest.cca3 === id);
+        
+        if (savedCountry) {
+          // If we have some basic data already, use it temporarily while loading full details
+          setCountry({
+            name: { common: savedCountry.name, official: savedCountry.name },
+            flags: { png: savedCountry.flag },
+            cca3: savedCountry.cca3
+          });
+        }
+        
+        // Now fetch full details from the API
         const data = await getCountryByCode(id);
-        setCountry(data);
-        setLoading(false);
+        if (data) {
+          setCountry(data);
+          setLoading(false);
+        } else {
+          setError('Country data not available. Please try again later.');
+          setLoading(false);
+        }
       } catch (error) {
+        console.error('Error fetching country details:', error);
         setError('Failed to load country details. Please try again later.');
         setLoading(false);
       }
     };
 
     fetchCountryDetails();
-  }, [id]);
+  }, [id, savedDestinations]);
 
-  if (loading) return <Loading />;
+  if (loading && !country) return <Loading />;
 
-  if (error) return <div className="error-message">{error}</div>;
+  if (error) return (
+    <div className="container">
+      <div className="error-message">{error}</div>
+      <button onClick={() => navigate(-1)} className="btn">Go Back</button>
+    </div>
+  );
 
-  if (!country) return <div className="error-message">Country not found</div>;
+  if (!country) return (
+    <div className="container">
+      <div className="error-message">Country not found</div>
+      <button onClick={() => navigate(-1)} className="btn">Go Back</button>
+    </div>
+  );
 
+  // Handle potentially missing data safely
   const {
-    name,
-    flags,
-    population,
-    region,
-    subregion,
-    capital,
-    currencies,
-    languages
+    name = { common: 'Unknown', official: 'Unknown' },
+    flags = { png: '' },
+    population = 0,
+    region = 'Unknown',
+    subregion = 'Unknown',
+    capital = [],
+    currencies = {},
+    languages = {}
   } = country;
 
   // Format population with commas
@@ -58,9 +92,9 @@ const CountryDetails = () => {
 
   return (
     <div className="container">
-      <Link to="/" className="btn">
-        &larr; Back to All Countries
-      </Link>
+      <button onClick={() => navigate(-1)} className="btn">
+        &larr; Go Back
+      </button>
 
       <div className="country-details">
         <div className="country-flag">
@@ -79,7 +113,7 @@ const CountryDetails = () => {
             </div>
             
             <div className="info-column">
-              <p><strong>Capital:</strong> {capital ? capital[0] : 'N/A'}</p>
+              <p><strong>Capital:</strong> {capital?.length ? capital[0] : 'N/A'}</p>
               <p><strong>Currencies:</strong> {currencyNames}</p>
               <p><strong>Languages:</strong> {languageNames}</p>
             </div>

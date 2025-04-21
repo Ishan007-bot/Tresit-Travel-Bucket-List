@@ -68,7 +68,8 @@ export const getAllCountries = async () => {
 export const getCountryByCode = async (countryCode) => {
   try {
     const response = await apiClient.get(`/alpha/${countryCode}`);
-    return response.data[0];
+    // The API might return the data directly or as an array depending on the endpoint
+    return Array.isArray(response.data) ? response.data[0] : response.data;
   } catch (error) {
     console.error(`Error fetching country with code ${countryCode}:`, error);
     throw error;

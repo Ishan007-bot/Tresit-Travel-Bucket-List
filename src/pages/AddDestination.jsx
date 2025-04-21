@@ -6,7 +6,7 @@ import Loading from '../components/Loading';
 
 const AddDestination = () => {
   const navigate = useNavigate();
-  const { savedDestinations, setSavedDestinations } = useTravel();
+  const { savedDestinations, addDestination } = useTravel();
   
   const [loading, setLoading] = useState(true);
   const [countries, setCountries] = useState([]);
@@ -107,7 +107,7 @@ const AddDestination = () => {
       dateAdded: new Date().toISOString()
     };
     
-    setSavedDestinations(prev => [...prev, newDestination]);
+    addDestination(newDestination);
     
     // Redirect to travel log
     navigate('/travel-log');

@@ -30,6 +30,7 @@ const FilterBar = ({ onSearch, onFilterRegion, onSort }) => {
             className="form-select" 
             onChange={handleRegionChange}
             defaultValue=""
+            aria-label="Filter by region"
           >
             <option value="">Filter by Region</option>
             {regions.map(region => (
@@ -43,6 +44,7 @@ const FilterBar = ({ onSearch, onFilterRegion, onSort }) => {
             className="form-select" 
             onChange={handleSortChange}
             defaultValue="name-asc"
+            aria-label="Sort countries"
           >
             <option value="" disabled>Sort by</option>
             {sortOptions.map(option => (
