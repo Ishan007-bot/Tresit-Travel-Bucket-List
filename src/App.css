@@ -3,11 +3,43 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative; /* For positioning the background */
 }
 
 .main-content {
   flex: 1;
   padding: var(--spacing-lg) 0;
+  position: relative; /* Ensure content is above background */
+  z-index: 1;
+}
+
+/* Enhance card and container transparency */
+.card, 
+.filter-section, 
+.travel-stats .stat-box,
+.saved-country-card,
+.travel-dashboard {
+  background-color: var(--card-bg);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .card, 
+[data-theme="dark"] .filter-section,
+[data-theme="dark"] .travel-stats .stat-box,
+[data-theme="dark"] .saved-country-card,
+[data-theme="dark"] .travel-dashboard {
+  background-color: rgba(30, 39, 46, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Container styles */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
 }
 
 /* Header Styles */
@@ -109,12 +141,43 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+.img-container {
+  height: 200px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.img-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 70%, rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.destination-card:hover .img-container::after {
+  opacity: 1;
 }
 
 .destination-img {
-  height: 200px;
+  height: 100%;
   object-fit: cover;
   width: 100%;
+  transition: transform var(--transition-normal);
+}
+
+.destination-card:hover .destination-img {
+  transform: scale(1.05);
 }
 
 .destination-content {

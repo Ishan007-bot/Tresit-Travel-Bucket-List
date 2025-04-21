@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert SVG to PNG</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .icon-preview {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+    .icon-preview > div {
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+    button {
+      background-color: #4a80f5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    canvas {
+      border: 1px solid #ddd;
+    }
+    .instructions {
+      text-align: left;
+      margin: 30px 0;
+      background-color: #f5f5f5;
+      padding: 20px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Convert SVG to PNG Icon</h1>
+  
+  <div class="icon-preview">
+    <div>
+      <h3>SVG Source</h3>
+      <img src="icon-144x144.svg" width="144" height="144" alt="SVG Icon">
+    </div>
+    <div>
+      <h3>PNG Output</h3>
+      <canvas id="canvas" width="144" height="144"></canvas>
+    </div>
+  </div>
+  
+  <button id="downloadBtn">Download PNG</button>
+  
+  <div class="instructions">
+    <h3>Instructions:</h3>
+    <ol>
+      <li>The SVG icon is displayed on the left, and it will be converted to PNG on the right.</li>
+      <li>Click the "Download PNG" button to download the icon as a PNG file.</li>
+      <li>Place this PNG file in the icons directory to use it in your PWA.</li>
+      <li>Repeat this process for each icon size in your manifest.json file.</li>
+    </ol>
+    <p>Recommended icon sizes:</p>
+    <ul>
+      <li>72x72</li>
+      <li>96x96</li>
+      <li>128x128</li>
+      <li>144x144</li>
+      <li>152x152</li>
+      <li>192x192</li>
+      <li>384x384</li>
+      <li>512x512</li>
+    </ul>
+  </div>
+  
+  <script>
+    window.onload = function() {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, 144, 144);
+      };
+      
+      img.src = 'icon-144x144.svg';
+      
+      document.getElementById('downloadBtn').addEventListener('click', function() {
+        const link = document.createElement('a');
+        link.download = 'icon-144x144.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    };
+  </script>
+</body>
+</html> 

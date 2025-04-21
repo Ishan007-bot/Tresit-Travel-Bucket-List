@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 // Create context
 const AuthContext = createContext();
+// Export the context directly so it can be imported in App.jsx
+export { AuthContext };
 
 // Custom hook to use auth context
 export function useAuth() {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTravel } from '../contexts/TravelContext';
 import Pagination from '../components/Pagination';
+import TravelDashboard from '../components/TravelDashboard';
 
 const TravelLog = () => {
   const { savedDestinations, removeDestination, updateDestination } = useTravel();
@@ -73,6 +74,8 @@ const TravelLog = () => {
     <div className="container">
       <h1>My Travel Log</h1>
       
+      {savedDestinations.length > 0 && <TravelDashboard />}
+      
       <div className="travel-stats">
         <div className="stat-box">
           <h3>Total Countries</h3>
@@ -122,13 +125,13 @@ const TravelLog = () => {
       </div>
       
       {filteredDestinations.length === 0 ? (
-        <div className="no-results">
+        <div className="no-results animate-fadeIn">
           <p>No countries in your {activeTab === 'all' ? 'travel log' : activeTab} yet.</p>
-          <Link to="/" className="btn">Explore Countries</Link>
+          <Link to="/" className="btn animate-pulse">Explore Countries</Link>
         </div>
       ) : (
         <>
-          <div className="saved-countries-grid">
+          <div className="saved-countries-grid stagger-list">
             {displayedDestinations.map(dest => (
               <div key={dest.cca3} className="saved-country-card card">
                 <img 
@@ -185,7 +188,7 @@ const TravelLog = () => {
             onPageChange={handlePageChange} 
           />
           
-          <div className="page-info">
+          <div className="page-info animate-fadeInUp">
             Showing {displayedDestinations.length} of {filteredDestinations.length} destinations
             {filteredDestinations.length > destinationsPerPage && (
               <span> (Page {currentPage} of {totalPages})</span>

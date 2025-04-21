@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tresit Icon Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      margin: 10px;
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .icon-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #4a80f5;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tresit Icon Generator</h1>
+  <p>Click on each icon to download it</p>
+  
+  <div class="icon-grid" id="icon-grid"></div>
+
+  <script>
+    // Sizes needed for the PWA icons
+    const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+    
+    // Function to draw icon on canvas
+    function drawIcon(canvas, size) {
+      const ctx = canvas.getContext('2d');
+      
+      // Set canvas size
+      canvas.width = size;
+      canvas.height = size;
+      
+      // Background gradient
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#4a80f5');
+      gradient.addColorStop(1, '#3a6ad4');
+      
+      // Draw background
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, size, size);
+      
+      // Draw text
+      ctx.fillStyle = 'white';
+      ctx.font = `bold ${size * 0.5}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('T', size / 2, size / 2);
+      
+      // Draw a small plane icon
+      ctx.beginPath();
+      const planeSize = size * 0.2;
+      const planeX = size * 0.7;
+      const planeY = size * 0.3;
+      
+      // Simple plane shape
+      ctx.moveTo(planeX, planeY);
+      ctx.lineTo(planeX - planeSize, planeY + planeSize * 0.5);
+      ctx.lineTo(planeX, planeY + planeSize);
+      ctx.closePath();
+      
+      ctx.fillStyle = 'white';
+      ctx.fill();
+    }
+    
+    // Create and add icons
+    function createIcons() {
+      const container = document.getElementById('icon-grid');
+      
+      sizes.forEach(size => {
+        // Create container for each icon
+        const iconContainer = document.createElement('div');
+        iconContainer.className = 'icon-container';
+        
+        // Create canvas
+        const canvas = document.createElement('canvas');
+        drawIcon(canvas, size);
+        
+        // Create download button
+        const downloadBtn = document.createElement('button');
+        downloadBtn.textContent = `Download ${size}x${size}`;
+        downloadBtn.onclick = () => {
+          const link = document.createElement('a');
+          link.download = `icon-${size}x${size}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        };
+        
+        // Add title
+        const title = document.createElement('p');
+        title.textContent = `${size}x${size}`;
+        
+        // Add to container
+        iconContainer.appendChild(title);
+        iconContainer.appendChild(canvas);
+        iconContainer.appendChild(downloadBtn);
+        container.appendChild(iconContainer);
+      });
+    }
+    
+    // Initialize
+    window.onload = createIcons;
+  </script>
+</body>
+</html> 

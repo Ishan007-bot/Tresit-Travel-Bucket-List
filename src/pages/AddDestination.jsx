@@ -25,13 +25,26 @@ const AddDestination = () => {
       try {
         setLoading(true);
         const data = await getAllCountries();
-        // Sort alphabetically
-        const sortedCountries = data.sort((a, b) => 
-          a.name.common.localeCompare(b.name.common)
-        );
+        
+        // Check if data is available
+        if (!data || data.length === 0) {
+          setError('No countries data available. Please try again later.');
+          setLoading(false);
+          return;
+        }
+        
+        // Sort alphabetically - handle both name structures (v3 API)
+        const sortedCountries = data.sort((a, b) => {
+          const nameA = a.name.common || (typeof a.name === 'string' ? a.name : '');
+          const nameB = b.name.common || (typeof b.name === 'string' ? b.name : '');
+          return nameA.localeCompare(nameB);
+        });
+        
+        console.log('Countries loaded:', sortedCountries.length);
         setCountries(sortedCountries);
         setLoading(false);
       } catch (error) {
+        console.error('Error loading countries:', error);
         setError('Failed to load countries. Please try again later.');
         setLoading(false);
       }
@@ -81,32 +94,45 @@ const AddDestination = () => {
     }
     
     // Find selected country data
-    const selectedCountry = countries.find(c => c.cca3 === formData.country);
+    const countryId = formData.country;
+    const selectedCountry = countries.find(c => (c.cca3 || c.alpha3Code) === countryId);
+    
     if (!selectedCountry) {
       setError('Selected country not found.');
       return;
     }
     
+    // Get country name correctly
+    const countryName = selectedCountry.name.common || 
+                        (typeof selectedCountry.name === 'string' ? selectedCountry.name : 'Unknown');
+    
+    // Get country flag correctly
+    const flagUrl = selectedCountry.flags?.png || 
+                    selectedCountry.flags?.svg || 
+                    selectedCountry.flag ||
+                    `https://flagcdn.com/w320/${countryId.toLowerCase()}.png`;
+    
     // Check if country is already in saved destinations
-    const alreadySaved = savedDestinations.find(d => d.cca3 === formData.country);
+    const alreadySaved = savedDestinations.find(d => d.cca3 === countryId);
     if (alreadySaved) {
       setFormErrors({
-        country: `${selectedCountry.name.common} is already in your ${alreadySaved.status} list`
+        country: `${countryName} is already in your ${alreadySaved.status} list`
       });
       return;
     }
     
     // Add to saved destinations
     const newDestination = {
-      cca3: selectedCountry.cca3,
-      name: selectedCountry.name.common,
-      flag: selectedCountry.flags.png,
+      cca3: countryId,
+      name: countryName,
+      flag: flagUrl,
       status: formData.status,
       notes: formData.notes,
       visitDate: formData.status === 'visited' ? formData.visitDate : null,
       dateAdded: new Date().toISOString()
     };
     
+    console.log('Adding destination:', newDestination);
     addDestination(newDestination);
     
     // Redirect to travel log
@@ -134,11 +160,14 @@ const AddDestination = () => {
               onChange={handleChange}
             >
               <option value="">Select a country</option>
-              {countries.map(country => (
-                <option key={country.cca3} value={country.cca3}>
-                  {country.name.common}
-                </option>
-              ))}
+              {countries.map(country => {
+                const countryName = country.name.common || (typeof country.name === 'string' ? country.name : 'Unknown');
+                return (
+                  <option key={country.cca3 || country.alpha3Code} value={country.cca3 || country.alpha3Code}>
+                    {countryName}
+                  </option>
+                );
+              })}
             </select>
             {formErrors.country && <div className="form-error">{formErrors.country}</div>}
           </div>

@@ -2,12 +2,32 @@
   width: 100%;
   padding: 1rem;
   margin-bottom: 1.5rem;
+  animation: fadeInUp 0.5s ease-out forwards;
 }
 
 .status-selector h3 {
   margin-bottom: 1rem;
   font-size: 1.2rem;
   color: var(--text-color);
+  position: relative;
+  display: inline-block;
+}
+
+.status-selector h3::after {
+  content: '';
+  position: absolute;
+  width: 30%;
+  height: 2px;
+  bottom: -5px;
+  left: 0;
+  background-color: var(--primary-color);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease-out;
+}
+
+.status-selector:hover h3::after {
+  transform: scaleX(1);
 }
 
 .status-options {
@@ -27,6 +47,25 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   font-family: var(--font-main);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.status-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+  z-index: -1;
+}
+
+.status-option:hover::before {
+  left: 100%;
 }
 
 .status-option:hover {
@@ -38,10 +77,16 @@
   background-color: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
+  animation: pulse 0.5s;
 }
 
 .status-icon {
   font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.status-option:hover .status-icon {
+  transform: scale(1.2);
 }
 
 .status-label {
@@ -55,6 +100,10 @@
 
 [data-theme="dark"] .status-option:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .status-option::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
 }
 
 /* Responsive adjustments */

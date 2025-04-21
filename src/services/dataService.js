@@ -13,7 +13,13 @@ export const getAllCountries = async () => {
       return await mock.getMockCountries();
     }
     
-    return await api.getAllCountries();
+    try {
+      return await api.getAllCountries();
+    } catch (apiError) {
+      console.error('API error getting countries, falling back to mock data:', apiError);
+      // Fallback to mock data if API fails
+      return await mock.getMockCountries();
+    }
   } catch (error) {
     console.error('Error getting all countries:', error);
     throw error;
@@ -29,7 +35,13 @@ export const getCountryByCode = async (code) => {
       return await mock.getMockCountryByCode(code);
     }
     
-    return await api.getCountryByCode(code);
+    try {
+      return await api.getCountryByCode(code);
+    } catch (apiError) {
+      console.error(`API error getting country with code ${code}, falling back to mock data:`, apiError);
+      // Fallback to mock data if API fails
+      return await mock.getMockCountryByCode(code);
+    }
   } catch (error) {
     console.error(`Error getting country with code ${code}:`, error);
     throw error;
@@ -55,7 +67,23 @@ export const getCountriesByCodes = async (codes) => {
       return countries;
     }
     
-    return await api.getCountriesByCodes(codes);
+    try {
+      return await api.getCountriesByCodes(codes);
+    } catch (apiError) {
+      console.error(`API error getting countries with codes ${codes}, falling back to mock data:`, apiError);
+      // Fallback to mock data if API fails
+      const countries = [];
+      for (const code of codes) {
+        try {
+          const country = await mock.getMockCountryByCode(code);
+          countries.push(country);
+        } catch (e) {
+          // Skip countries that weren't found
+          console.warn(`Country with code ${code} not found in mock data`);
+        }
+      }
+      return countries;
+    }
   } catch (error) {
     console.error(`Error getting countries with codes ${codes}:`, error);
     return []; // Return empty array instead of throwing
@@ -71,14 +99,21 @@ export const searchCountries = async (name) => {
       return await mock.searchMockCountries(name);
     }
     
-    return await api.searchCountries(name);
+    try {
+      return await api.searchCountries(name);
+    } catch (apiError) {
+      console.error(`API error searching countries with name ${name}, falling back to mock data:`, apiError);
+      // Fallback to mock data if API fails
+      return await mock.searchMockCountries(name);
+    }
   } catch (error) {
     console.error(`Error searching countries with name ${name}:`, error);
     // Return empty array for not found
     if (error.response && error.response.status === 404) {
       return [];
     }
-    throw error;
+    // If all else fails, return empty array
+    return [];
   }
 };
 
@@ -91,10 +126,25 @@ export const getCountriesByRegion = async (region) => {
       return await mock.getMockCountriesByRegion(region);
     }
     
-    return await api.getCountriesByRegion(region);
+    try {
+      return await api.getCountriesByRegion(region);
+    } catch (apiError) {
+      console.error(`API error getting countries in region ${region}, falling back to mock data:`, apiError);
+      // Fallback to mock data if API fails
+      return await mock.getMockCountriesByRegion(region);
+    }
   } catch (error) {
     console.error(`Error getting countries in region ${region}:`, error);
-    throw error;
+    // Return all countries filtered by region if all else fails
+    try {
+      const allCountries = await getAllCountries();
+      return allCountries.filter(country => 
+        country.region && country.region.toLowerCase().includes(region.toLowerCase())
+      );
+    } catch (e) {
+      console.error('Failed to get countries by region using fallback method:', e);
+      return [];
+    }
   }
 };
 

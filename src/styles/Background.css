@@ -1,0 +1,140 @@
+/* 
+ * Background styles for Tresit application 
+ * Using Thailand travel-inspired background
+ */
+
+.app-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  background: linear-gradient(135deg, #13547a 0%, #80d0c7 100%);
+}
+
+/* Dark theme background */
+.app-background[data-theme="dark"] {
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+}
+
+/* Decorative elements container */
+.decorative-elements {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Palm trees */
+.palm-tree {
+  position: absolute;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 200' width='100' height='200'%3E%3Cpath d='M50,200 L60,150 L40,150 Z M50,150 C50,150 30,120 25,100 C20,80 35,70 30,50 C25,30 10,20 10,20 C10,20 30,25 40,40 C50,55 45,75 55,95 C65,115 70,130 70,130 M50,150 C50,150 70,120 75,100 C80,80 65,70 70,50 C75,30 90,20 90,20 C90,20 70,25 60,40 C50,55 55,75 45,95 C35,115 30,130 30,130' fill='%23000000' opacity='0.7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  width: 100px;
+  height: 200px;
+  bottom: 0;
+}
+
+.palm-tree-1 {
+  left: 5%;
+  transform: scale(1.5);
+}
+
+.palm-tree-2 {
+  right: 5%;
+  transform: scale(1.2) scaleX(-1);
+}
+
+/* Floating lanterns */
+.floating-lantern {
+  position: absolute;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 80' width='50' height='80'%3E%3Cellipse cx='25' cy='30' rx='20' ry='25' fill='%23FF7F00' opacity='0.8'/%3E%3Crect x='23' y='5' width='4' height='5' fill='%23D35400'/%3E%3Crect x='22' y='55' width='6' height='2' fill='%23D35400'/%3E%3Crect x='24' y='57' width='2' height='20' fill='%23D35400'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  width: 50px;
+  height: 80px;
+  animation: float 15s infinite ease-in-out;
+  opacity: 0.8;
+}
+
+.lantern-1 {
+  top: 15%;
+  left: 20%;
+  animation-delay: 0s;
+}
+
+.lantern-2 {
+  top: 20%;
+  right: 30%;
+  animation-delay: -5s;
+  transform: scale(0.8);
+}
+
+.lantern-3 {
+  top: 35%;
+  left: 60%;
+  animation-delay: -10s;
+  transform: scale(0.6);
+}
+
+/* Temple silhouette */
+.temple-silhouette {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 200px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' width='300' height='200'%3E%3Cpath d='M150,10 L170,40 L185,40 L200,70 L215,70 L230,100 L245,100 L260,130 L270,130 L280,160 L290,160 L300,200 L0,200 L10,160 L20,160 L30,130 L40,130 L55,100 L70,100 L85,70 L100,70 L115,40 L130,40 Z M140,200 L140,150 L160,150 L160,200 Z' fill='%23000000' opacity='0.7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+}
+
+/* Animation for floating lanterns */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Add Thailand-inspired pattern overlay */
+.app-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0,0 L40,0 L40,40 L0,40 Z' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='1'/%3E%3Cpath d='M20,20 L20,0 M20,20 L40,20 M20,20 L20,40 M20,20 L0,20' stroke='rgba(255,255,255,0.05)' stroke-width='0.5'/%3E%3C/svg%3E");
+  opacity: 0.3;
+}
+
+/* Dark theme adjustments */
+.app-background[data-theme="dark"] .temple-silhouette,
+.app-background[data-theme="dark"] .palm-tree {
+  opacity: 0.5;
+}
+
+.app-background[data-theme="dark"] .floating-lantern {
+  filter: brightness(1.2);
+}
+
+/* After-image overlay for better contrast with content */
+.app-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.5));
+}
+
+[data-theme="dark"] .app-background::after {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+} 

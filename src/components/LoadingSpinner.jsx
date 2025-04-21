@@ -1,9 +1,10 @@
 import React from 'react';
 
 /**
- * Loading spinner component that shows during data fetching operations
+ * A loading spinner component that displays an animated globe
+ * Used during suspense fallback and loading states
  */
-const Loading = ({ message = 'Loading...' }) => {
+const LoadingSpinner = ({ message = 'Loading...' }) => {
   return (
     <div className="loading-container">
       <div className="loading-animation">
@@ -19,4 +20,4 @@ const Loading = ({ message = 'Loading...' }) => {
   );
 };
 
-export default Loading; 
+export default LoadingSpinner; 

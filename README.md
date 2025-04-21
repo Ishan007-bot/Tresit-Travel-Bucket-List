@@ -1,93 +1,171 @@
-# Tresit - Travel Bucket List Application
+# Tresit - Travel Bucket List App
 
-A visual bucket list for travel destinations with features to mark countries as wished or visited, explore country details, and track your travel progress.
+![Tresit Logo](./public/logo.png)
 
-## Features
+Tresit is a modern web application that helps you track and manage your travel bucket list. Plan your future adventures, mark countries as visited, and visualize your travel statistics.
 
-- Browse countries from around the world with a clean, responsive UI
-- View detailed information for each country
-- Save countries to your bucket list (wishlist or visited)
-- Track your travel statistics
-- Search and filter countries by region, population, etc.
+## 🌟 Features
 
-## Technology Stack
+- **Explore Countries**: Browse and search countries from around the world
+- **Travel Status Tracking**: Track countries as Wishlist, Planning, Booked, or Visited
+- **Travel Statistics**: Visualize your travel plans and achievements with charts
+- **Travel Log**: Filter and view your saved destinations by status
+- **Dynamic Filtering**: Search and filter countries by region, name, and other criteria
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **Offline Support**: Basic functionality works even without an internet connection
+- **Dark/Light Mode**: Toggle between light and dark themes for comfortable viewing
 
-- React.js (Functional Components & Hooks)
-- React Router for navigation
-- Context API for state management
-- REST Countries API for country data
-- Custom CSS for styling
-- LocalStorage for data persistence
+## 🚀 Live Demo
 
-## Getting Started
+Visit the live application at [https://tresit-app.netlify.app](https://tresit-app.netlify.app)
 
-### Prerequisites
+## 📖 Table of Contents
 
-- Node.js (v14 or higher)
-- npm or yarn
+- [Installation](#installation)
+- [Usage](#usage)
+- [Architecture](#architecture)
+- [Folder Structure](#folder-structure)
+- [Technologies Used](#technologies-used)
+- [Performance Optimizations](#performance-optimizations)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
-### Installation
+## 🔧 Installation
 
-1. Clone the repository
-```bash
-git clone <repository-url>
-```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/tresit.git
+   cd tresit
+   ```
 
-2. Navigate to the project directory
-```bash
-cd tresit
-```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-3. Install dependencies
-```bash
-npm install
-```
+3. Set up environment variables:
+   - Create a `.env` file based on `.env.example`
+   - Add your Firebase configuration (if using Firebase)
 
-4. Start the development server
-```bash
-npm run dev
-```
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-The application will be available at `http://localhost:5173`
+## 🎮 Usage
 
-## Project Structure
+### Adding Countries to Your Travel List
+1. Browse countries on the home page
+2. Click on "View Details" to see more information about a country
+3. Set your travel status (Wishlist, Planning, Booked, or Visited)
+4. Add optional notes about your travel plans
+
+### Viewing Your Travel Log
+1. Navigate to "Travel Log" in the menu
+2. Filter your destinations by status
+3. View your travel statistics and visualizations
+4. Edit or remove destinations as needed
+
+## 🏗️ Architecture
+
+Tresit follows a component-based architecture using React. It uses Context API for state management, and implements a service layer for API interactions.
+
+### State Management
+- `TravelContext`: Manages saved destinations and travel plans
+- `ThemeContext`: Handles theme preferences (dark/light mode)
+- `AuthContext`: Manages user authentication state
+
+### Data Flow
+1. API requests are made through service functions
+2. Services return data to components or contexts
+3. Components render data from context or local state
+4. User interactions trigger context updates
+
+## 📁 Folder Structure
 
 ```
 tresit/
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   │   ├── DestinationCard.jsx
-│   │   ├── Footer.jsx
-│   │   ├── Header.jsx
-│   │   └── Loading.jsx
-│   ├── contexts/
-│   │   └── TravelContext.jsx
-│   ├── pages/
-│   │   ├── AddDestination.jsx
-│   │   ├── CountryDetails.jsx
-│   │   ├── HomePage.jsx
-│   │   └── TravelLog.jsx
-│   ├── services/
-│   │   └── api.js
-│   ├── styles/
-│   ├── App.css
-│   ├── App.jsx
-│   ├── index.css
-│   └── main.jsx
-├── .gitignore
-├── index.html
-├── package.json
-└── README.md
+├── public/               # Static assets
+│   ├── icons/            # App icons for PWA
+│   └── screenshots/      # App screenshots
+├── src/                  # Source code
+│   ├── components/       # Reusable UI components
+│   ├── contexts/         # Context providers for state management
+│   ├── hooks/            # Custom React hooks
+│   ├── pages/            # Top-level page components
+│   ├── services/         # API and data services
+│   ├── styles/           # CSS styles
+│   ├── utils/            # Utility functions
+│   ├── App.jsx           # Main App component
+│   └── main.jsx          # Entry point
+├── .env                  # Environment variables
+├── index.html            # HTML template
+└── vite.config.js        # Vite configuration
 ```
 
-## License
+## 🔨 Technologies Used
 
-This project is open source and available under the [MIT License](LICENSE).
+### Core
+- [React](https://reactjs.org/) - UI library
+- [React Router](https://reactrouter.com/) - Routing
+- [Vite](https://vitejs.dev/) - Build tool and development server
 
-## Acknowledgments
+### State Management
+- React Context API - Global state management
 
-- [REST Countries API](https://restcountries.com/) for providing country data
-- [React Router](https://reactrouter.com/) for routing
-- [Recharts](https://recharts.org/) for visualizations
+### Data Visualization
+- [Recharts](https://recharts.org/) - Charts and data visualization
+
+### Networking
+- [Axios](https://axios-http.com/) - HTTP client
+
+### Optimization
+- Code-splitting with React.lazy
+- Image lazy loading
+- Service Worker for caching and offline support
+
+### APIs
+- [REST Countries API](https://restcountries.com/) - Country data
+- Optional: [Firebase](https://firebase.google.com/) - Authentication and database
+
+## ⚡ Performance Optimizations
+
+Tresit implements several performance optimizations:
+
+- **Code Splitting**: Routes are loaded lazily with React.lazy and Suspense to reduce initial bundle size
+- **Image Optimization**: Images are lazy-loaded using IntersectionObserver for better performance
+- **Memoization**: Components use React.memo to prevent unnecessary re-renders
+- **Service Worker**: Assets are cached for faster loading and offline support
+- **Mock Data Fallback**: Local data is used when API is unavailable
+- **CSS Animations**: Hardware-accelerated animations for smooth transitions
+
+## 🚢 Deployment
+
+### Building for Production
+
+```bash
+npm run build
+```
+
+The built files will be in the `dist/` directory.
+
+### Deployment Options
+
+- **Netlify**: Connect your GitHub repository to Netlify for automatic deployments
+- **Vercel**: Similar to Netlify, provides easy deployments from Git repositories
+- **Firebase Hosting**: Good option if you're also using Firebase for backend
+
+## 👥 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
