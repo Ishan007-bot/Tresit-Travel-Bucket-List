@@ -29,6 +29,11 @@ export default defineConfig({
     
     // Optimize output chunks
     rollupOptions: {
+      external: [
+        '@fortawesome/react-fontawesome',
+        '@fortawesome/free-solid-svg-icons',
+        '@fortawesome/fontawesome-svg-core'
+      ],
       output: {
         manualChunks: {
           react: ['react', 'react-dom', 'react-router-dom'],
