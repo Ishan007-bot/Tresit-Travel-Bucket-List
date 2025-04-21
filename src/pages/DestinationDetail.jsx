@@ -3,8 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTravel } from '../contexts/TravelContext';
 import * as dataService from '../services/dataService';
 import useFetch from '../hooks/useFetch';
-import LoadingState from '../components/LoadingState';
-import ErrorHandler from '../components/ErrorHandler';
+import Loading from '../components/Loading';
 import MapView from '../components/MapView';
 import StatusSelector from '../components/StatusSelector';
 import TravelPlanner from '../components/TravelPlanner';
@@ -23,7 +22,7 @@ const DestinationDetail = () => {
     data: country, 
     loading, 
     error, 
-    execute: fetchCountry 
+    retry: retryFetch 
   } = useFetch(() => dataService.getCountryByCode(id), [id]);
 
   // Check if country is in saved destinations
@@ -41,22 +40,41 @@ const DestinationDetail = () => {
     setStatus(newStatus);
     
     if (newStatus && country) {
+      // Get country name safely
+      const countryName = country.name?.common || 
+                         (typeof country.name === 'string' ? country.name : 'Unknown Country');
+      
+      // Get flag URL safely
+      const flagUrl = country.flags?.png || 
+                     country.flags?.svg || 
+                     `https://flagcdn.com/w320/${id.toLowerCase()}.png`;
+      
+      // Get capital safely
+      const capital = country.capital ? 
+                     (Array.isArray(country.capital) ? country.capital[0] : country.capital) : 
+                     'Unknown';
+      
       const countryData = {
-        cca3: country.cca3,
-        name: country.name.common,
-        flag: country.flags.png,
-        capital: country.capital?.[0] || 'Unknown',
-        region: country.region,
+        cca3: id,
+        name: countryName,
+        flag: flagUrl,
+        capital: capital,
+        region: country.region || 'Unknown',
         status: newStatus,
-        notes
+        notes,
+        dateUpdated: new Date().toISOString()
       };
       
       // Check if country is already saved
       const existingIndex = savedDestinations.findIndex(dest => dest.cca3 === id);
       
       if (existingIndex >= 0) {
-        updateDestination(existingIndex, countryData);
+        updateDestination(existingIndex, {
+          ...savedDestinations[existingIndex],
+          ...countryData
+        });
       } else {
+        countryData.dateAdded = new Date().toISOString();
         addDestination(countryData);
       }
     }
@@ -71,21 +89,57 @@ const DestinationDetail = () => {
     if (existingIndex >= 0 && status) {
       const updatedDestination = {
         ...savedDestinations[existingIndex],
-        notes: newNotes
+        notes: newNotes,
+        dateUpdated: new Date().toISOString()
       };
       updateDestination(existingIndex, updatedDestination);
     }
   };
 
-  const handleRetry = () => {
-    fetchCountry();
-  };
-
-  if (loading) return <LoadingState message="Loading country details..." />;
+  if (loading) return <Loading message="Loading country details..." />;
   
-  if (error) return <ErrorHandler error={error} retry={handleRetry} />;
+  if (error) {
+    return (
+      <div className="error-container">
+        <h2>Error Loading Country</h2>
+        <p className="error-message">{error.message || 'Failed to load country details.'}</p>
+        <div className="error-actions">
+          <button className="btn retry-button" onClick={retryFetch}>
+            Retry
+          </button>
+          <button className="btn" onClick={() => navigate(-1)}>
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  if (!country) return <ErrorHandler error="Country not found" retry={() => navigate('/')} />;
+  if (!country) {
+    return (
+      <div className="error-container">
+        <h2>Country Not Found</h2>
+        <p className="error-message">
+          We couldn't find information for this country. It may not exist or the ID may be incorrect.
+        </p>
+        <button className="btn" onClick={() => navigate(-1)}>
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  // Get country name safely
+  const countryName = country.name?.common || 
+                     (typeof country.name === 'string' ? country.name : 'Unknown Country');
+  
+  // Get flag URL safely
+  const flagUrl = country.flags?.png || 
+                 country.flags?.svg || 
+                 `https://flagcdn.com/w320/${id.toLowerCase()}.png`;
+  
+  // Get flag alt text safely
+  const flagAlt = country.flags?.alt || `Flag of ${countryName}`;
 
   return (
     <div className="destination-detail container">
@@ -95,13 +149,15 @@ const DestinationDetail = () => {
       
       <div className="destination-header">
         <div className="flag-container">
-          <img src={country.flags.png} alt={country.flags.alt || `Flag of ${country.name.common}`} className="country-flag" />
+          <img src={flagUrl} alt={flagAlt} className="country-flag" />
         </div>
         <div className="destination-title">
-          <h1>{country.name.common}</h1>
-          <p className="destination-subheader">
-            {country.name.official}
-          </p>
+          <h1>{countryName}</h1>
+          {country.name?.official && country.name.official !== countryName && (
+            <p className="destination-subheader">
+              {country.name.official}
+            </p>
+          )}
         </div>
       </div>
 
@@ -119,11 +175,15 @@ const DestinationDetail = () => {
             <div className="info-grid">
               <div className="info-item">
                 <span className="info-label">Capital:</span>
-                <span className="info-value">{country.capital?.[0] || 'None'}</span>
+                <span className="info-value">
+                  {country.capital ? 
+                    (Array.isArray(country.capital) ? country.capital[0] : country.capital) 
+                    : 'None'}
+                </span>
               </div>
               <div className="info-item">
                 <span className="info-label">Region:</span>
-                <span className="info-value">{country.region}</span>
+                <span className="info-value">{country.region || 'Unknown'}</span>
               </div>
               <div className="info-item">
                 <span className="info-label">Subregion:</span>
@@ -131,7 +191,9 @@ const DestinationDetail = () => {
               </div>
               <div className="info-item">
                 <span className="info-label">Population:</span>
-                <span className="info-value">{country.population.toLocaleString()}</span>
+                <span className="info-value">
+                  {country.population ? country.population.toLocaleString() : 'Unknown'}
+                </span>
               </div>
               <div className="info-item">
                 <span className="info-label">Languages:</span>
@@ -171,20 +233,20 @@ const DestinationDetail = () => {
           <MapView 
             latitude={country.latlng?.[0]} 
             longitude={country.latlng?.[1]} 
-            countryName={country.name.common} 
+            countryName={countryName} 
           />
         </div>
       </div>
 
       <TravelTips
-        countryName={country.name.common}
-        region={country.region}
+        countryName={countryName}
+        region={country.region || ''}
       />
       
       {status && (
         <TravelPlanner 
-          countryName={country.name.common}
-          countryCode={country.cca3} 
+          countryName={countryName}
+          countryCode={id} 
         />
       )}
     </div>

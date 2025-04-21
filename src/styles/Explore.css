@@ -1,0 +1,137 @@
+.explore-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.explore-header h1 {
+  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+  color: var(--text-color);
+}
+
+.explore-header p {
+  color: var(--text-light);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.countries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.country-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-light);
+}
+
+.country-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--box-shadow-medium);
+}
+
+.img-container {
+  height: 180px;
+  overflow: hidden;
+}
+
+.country-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.country-card:hover .country-img {
+  transform: scale(1.05);
+}
+
+.country-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.country-title {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.country-details {
+  margin-bottom: 1.5rem;
+  color: var(--text-light);
+  flex: 1;
+}
+
+.country-details p {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.country-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.view-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  border-radius: var(--border-radius-sm);
+}
+
+.pagination-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.page-info {
+  margin-top: 1rem;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .countries-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .explore-header h1 {
+    font-size: 2rem;
+  }
+  
+  .explore-header p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .countries-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .country-title {
+    font-size: 1.2rem;
+  }
+  
+  .img-container {
+    height: 150px;
+  }
+} 

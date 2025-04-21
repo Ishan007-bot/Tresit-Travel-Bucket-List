@@ -16,6 +16,7 @@ const DestinationDetail = lazy(() => import('./pages/DestinationDetail'));
 const AddDestination = lazy(() => import('./pages/AddDestination'));
 const Profile = lazy(() => import('./pages/Profile'));
 const TravelLog = lazy(() => import('./pages/TravelLog'));
+const Explore = lazy(() => import('./pages/Explore'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Protected route component
@@ -43,6 +44,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/explore" element={<Explore />} />
                 
                 {/* Protected routes */}
                 <Route path="/destination/:id" element={

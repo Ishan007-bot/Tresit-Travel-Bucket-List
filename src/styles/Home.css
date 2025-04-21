@@ -134,4 +134,13 @@
     max-width: 300px;
     margin: 0 auto;
   }
+}
+
+/* Dark Theme */
+[data-theme="dark"] .hero-content h1 {
+  color: white;
+}
+
+[data-theme="dark"] .hero-content p {
+  color: #f0f0f0;
 } 

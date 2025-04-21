@@ -14,9 +14,14 @@ const Home = () => {
           <h1>Discover Your Next Adventure</h1>
           <p>Track, plan, and remember your travels around the world</p>
           {currentUser ? (
-            <Link to="/add-destination" className="cta-button">
-              Add New Destination
-            </Link>
+            <div className="cta-buttons">
+              <Link to="/add-destination" className="cta-button">
+                Add New Destination
+              </Link>
+              <Link to="/explore" className="cta-button secondary">
+                Explore
+              </Link>
+            </div>
           ) : (
             <div className="cta-buttons">
               <Link to="/login" className="cta-button">

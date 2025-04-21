@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTravel } from '../contexts/TravelContext';
-import { getAllCountries } from '../services/api';
+import { getAllCountries } from '../services/dataService';
 import Loading from '../components/Loading';
+import '../styles/AddDestination.css';
 
 const AddDestination = () => {
   const navigate = useNavigate();
