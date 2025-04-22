@@ -1,64 +1,64 @@
-# Tresit - Travel Bucket List App
+# 🌍 Tresit - Travel Bucket List App
 
-![Tresit Logo](./public/logo.png)
 
-## Description
+
+## 📝 Description
 
 Tresit is a modern web application that helps you track and manage your travel bucket list. Plan your future adventures, mark countries as visited, and visualize your travel statistics. The app provides an intuitive interface for exploring countries worldwide and organizing your travel plans.
 
-## Features
+## ✨ Features
 
-- **Explore Countries**: Browse and search countries from around the world
-- **Country Details**: View detailed information about each country
-- **Travel Status Tracking**: Track countries as Wishlist, Planning, Booked, or Visited
-- **Travel Statistics**: Visualize your travel plans and achievements with charts
-- **Travel Log**: Filter and view your saved destinations by status
-- **Dynamic Filtering**: Search and filter countries by region, name, and other criteria
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **Dark/Light Mode**: Toggle between light and dark themes for comfortable viewing
+- **🔍 Explore Countries**: Browse and search countries from around the world
+- **📊 Country Details**: View detailed information about each country
+- **🏷️ Travel Status Tracking**: Track countries as Wishlist, Planning, Booked, or Visited
+- **📈 Travel Statistics**: Visualize your travel plans and achievements with charts
+- **📓 Travel Log**: Filter and view your saved destinations by status
+- **🔎 Dynamic Filtering**: Search and filter countries by region, name, and other criteria
+- **📱 Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **🌓 Dark/Light Mode**: Toggle between light and dark themes for comfortable viewing
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **Frontend**: React 19, React Router 7
-- **Build Tool**: Vite 6
-- **State Management**: React Context API
-- **Styling**: CSS with custom variables for theming
-- **Data Visualization**: Recharts
-- **HTTP Client**: Axios
-- **Icons**: FontAwesome, React Icons
-- **API**: REST Countries API
-- **Deployment**: Netlify
+- **⚛️ Frontend**: React 19, React Router 7
+- **⚡ Build Tool**: Vite 6
+- **🧠 State Management**: React Context API
+- **🎨 Styling**: CSS with custom variables for theming
+- **📊 Data Visualization**: Recharts
+- **🔄 HTTP Client**: Axios
+- **🎭 Icons**: FontAwesome, React Icons
+- **🌐 API**: REST Countries API
+- **🚀 Deployment**: Netlify
 
-## Setup Instructions
+## 🚀 Setup Instructions
 
-1. **Clone the repository**
+1. **📥 Clone the repository**
    ```bash
    git clone https://github.com/Ishan007-bot/Tresit-Travel-Bucket-List.git
    cd Tresit-Travel-Bucket-List
    ```
 
-2. **Install dependencies**
+2. **📦 Install dependencies**
    ```bash
    npm install
    ```
 
-3. **Set up environment variables**
+3. **🔑 Set up environment variables**
    - Create a `.env` file based on `.env.example`
    - Add your API keys if required
 
-4. **Start the development server**
+4. **🏃‍♂️ Start the development server**
    ```bash
    npm run dev
    ```
    The app will be available at http://localhost:3000
 
-5. **Building for production**
+5. **🏗️ Building for production**
    ```bash
    npm run build
    ```
    The built files will be in the `dist/` directory.
 
-## Screenshots
+## 📸 Screenshots
 
 <!-- 
 Add screenshots of your application here:
@@ -73,21 +73,21 @@ Add screenshots of your application here:
 
 > Note: Replace the placeholder images above with actual screenshots of your application.
 
-## Live Demo
+## 🌐 Live Demo
 
 Visit the live application at [https://tresittravel.netlify.app](https://tresittravel.netlify.app)
 
-## 📖 Table of Contents
+## 📑 Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Architecture](#architecture)
-- [Folder Structure](#folder-structure)
-- [Technologies Used](#technologies-used)
-- [Performance Optimizations](#performance-optimizations)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Architecture](#-architecture)
+- [Folder Structure](#-folder-structure)
+- [Technologies Used](#-technologies-used)
+- [Performance Optimizations](#-performance-optimizations)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## 🔧 Installation
 
@@ -113,13 +113,13 @@ Visit the live application at [https://tresittravel.netlify.app](https://tresitt
 
 ## 🎮 Usage
 
-### Adding Countries to Your Travel List
+### ✈️ Adding Countries to Your Travel List
 1. Browse countries on the home page
 2. Click on "View Details" to see more information about a country
 3. Set your travel status (Wishlist, Planning, Booked, or Visited)
 4. Add optional notes about your travel plans
 
-### Viewing Your Travel Log
+### 📋 Viewing Your Travel Log
 1. Navigate to "Travel Log" in the menu
 2. Filter your destinations by status
 3. View your travel statistics and visualizations
@@ -129,12 +129,12 @@ Visit the live application at [https://tresittravel.netlify.app](https://tresitt
 
 Tresit follows a component-based architecture using React. It uses Context API for state management, and implements a service layer for API interactions.
 
-### State Management
+### 🧩 State Management
 - `TravelContext`: Manages saved destinations and travel plans
 - `ThemeContext`: Handles theme preferences (dark/light mode)
 - `AuthContext`: Manages user authentication state
 
-### Data Flow
+### 🔄 Data Flow
 1. API requests are made through service functions
 2. Services return data to components or contexts
 3. Components render data from context or local state
@@ -164,26 +164,26 @@ tresit/
 
 ## 🔨 Technologies Used
 
-### Core
+### 🧱 Core
 - [React](https://reactjs.org/) - UI library
 - [React Router](https://reactrouter.com/) - Routing
 - [Vite](https://vitejs.dev/) - Build tool and development server
 
-### State Management
+### 🧠 State Management
 - React Context API - Global state management
 
-### Data Visualization
+### 📊 Data Visualization
 - [Recharts](https://recharts.org/) - Charts and data visualization
 
-### Networking
+### 🌐 Networking
 - [Axios](https://axios-http.com/) - HTTP client
 
-### Optimization
+### ⚡ Optimization
 - Code-splitting with React.lazy
 - Image lazy loading
 - Service Worker for caching and offline support
 
-### APIs
+### 🔌 APIs
 - [REST Countries API](https://restcountries.com/) - Country data
 - Optional: [Firebase](https://firebase.google.com/) - Authentication and database
 
@@ -191,16 +191,16 @@ tresit/
 
 Tresit implements several performance optimizations:
 
-- **Code Splitting**: Routes are loaded lazily with React.lazy and Suspense to reduce initial bundle size
-- **Image Optimization**: Images are lazy-loaded using IntersectionObserver for better performance
-- **Memoization**: Components use React.memo to prevent unnecessary re-renders
-- **Service Worker**: Assets are cached for faster loading and offline support
-- **Mock Data Fallback**: Local data is used when API is unavailable
-- **CSS Animations**: Hardware-accelerated animations for smooth transitions
+- **🔀 Code Splitting**: Routes are loaded lazily with React.lazy and Suspense to reduce initial bundle size
+- **🖼️ Image Optimization**: Images are lazy-loaded using IntersectionObserver for better performance
+- **🧠 Memoization**: Components use React.memo to prevent unnecessary re-renders
+- **🔄 Service Worker**: Assets are cached for faster loading and offline support
+- **📋 Mock Data Fallback**: Local data is used when API is unavailable
+- **✨ CSS Animations**: Hardware-accelerated animations for smooth transitions
 
 ## 🚢 Deployment
 
-### Building for Production
+### 🏗️ Building for Production
 
 ```bash
 npm run build
@@ -208,21 +208,21 @@ npm run build
 
 The built files will be in the `dist/` directory.
 
-### Deployment Options
+### 🚀 Deployment Options
 
-- **Netlify**: Connect your GitHub repository to Netlify for automatic deployments
-- **Vercel**: Similar to Netlify, provides easy deployments from Git repositories
-- **Firebase Hosting**: Good option if you're also using Firebase for backend
+- **☁️ Netlify**: Connect your GitHub repository to Netlify for automatic deployments
+- **🔼 Vercel**: Similar to Netlify, provides easy deployments from Git repositories
+- **🔥 Firebase Hosting**: Good option if you're also using Firebase for backend
 
 ## 👥 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. 🍴 Fork the repository
+2. 🌿 Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. 💾 Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. 📤 Push to the branch (`git push origin feature/amazing-feature`)
+5. 🔃 Open a Pull Request
 
 ## 📝 License
 
