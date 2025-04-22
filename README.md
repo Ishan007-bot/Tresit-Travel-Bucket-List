@@ -2,22 +2,80 @@
 
 ![Tresit Logo](./public/logo.png)
 
-Tresit is a modern web application that helps you track and manage your travel bucket list. Plan your future adventures, mark countries as visited, and visualize your travel statistics.
+## Description
 
-## 🌟 Features
+Tresit is a modern web application that helps you track and manage your travel bucket list. Plan your future adventures, mark countries as visited, and visualize your travel statistics. The app provides an intuitive interface for exploring countries worldwide and organizing your travel plans.
+
+## Features
 
 - **Explore Countries**: Browse and search countries from around the world
+- **Country Details**: View detailed information about each country
 - **Travel Status Tracking**: Track countries as Wishlist, Planning, Booked, or Visited
 - **Travel Statistics**: Visualize your travel plans and achievements with charts
 - **Travel Log**: Filter and view your saved destinations by status
 - **Dynamic Filtering**: Search and filter countries by region, name, and other criteria
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **Offline Support**: Basic functionality works even without an internet connection
 - **Dark/Light Mode**: Toggle between light and dark themes for comfortable viewing
 
-## 🚀 Live Demo
+## Tech Stack
 
-Visit the live application at [https://tresit-app.netlify.app](https://tresit-app.netlify.app)
+- **Frontend**: React 19, React Router 7
+- **Build Tool**: Vite 6
+- **State Management**: React Context API
+- **Styling**: CSS with custom variables for theming
+- **Data Visualization**: Recharts
+- **HTTP Client**: Axios
+- **Icons**: FontAwesome, React Icons
+- **API**: REST Countries API
+- **Deployment**: Netlify
+
+## Setup Instructions
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Ishan007-bot/Tresit-Travel-Bucket-List.git
+   cd Tresit-Travel-Bucket-List
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   - Create a `.env` file based on `.env.example`
+   - Add your API keys if required
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+   The app will be available at http://localhost:3000
+
+5. **Building for production**
+   ```bash
+   npm run build
+   ```
+   The built files will be in the `dist/` directory.
+
+## Screenshots
+
+<!-- 
+Add screenshots of your application here:
+1. Place screenshot images in the public/screenshots/ directory
+2. Update the image paths below with your actual screenshot filenames
+-->
+
+![Home Page](./public/screenshots/home.png)
+![Explore Countries](./public/screenshots/explore.png)
+![Country Details](./public/screenshots/details.png)
+![Travel Log](./public/screenshots/log.png)
+
+> Note: Replace the placeholder images above with actual screenshots of your application.
+
+## Live Demo
+
+Visit the live application at [https://tresittravel.netlify.app](https://tresittravel.netlify.app)
 
 ## 📖 Table of Contents
 
@@ -35,8 +93,8 @@ Visit the live application at [https://tresit-app.netlify.app](https://tresit-ap
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/tresit.git
-   cd tresit
+   git clone https://github.com/Ishan007-bot/Tresit-Travel-Bucket-List.git
+   cd Tresit-Travel-Bucket-List
    ```
 
 2. Install dependencies:
