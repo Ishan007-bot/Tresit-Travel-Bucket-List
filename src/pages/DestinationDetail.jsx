@@ -4,6 +4,7 @@ import { useTravel } from '../contexts/TravelContext';
 import * as dataService from '../services/dataService';
 import Loading from '../components/Loading';
 import StatusSelector from '../components/StatusSelector';
+import TravelPlanner from '../components/TravelPlanner';
 import '../styles/DestinationDetail.css';
 import '../styles/StaticComponents.css';
 
@@ -55,28 +56,6 @@ const StaticTravelTips = ({ countryName }) => {
           <span className="tip-text">Purchase travel insurance that covers medical emergencies.</span>
         </li>
       </ul>
-    </div>
-  );
-};
-
-// Simple static budget planner component
-const StaticBudgetPlanner = ({ countryName }) => {
-  return (
-    <div className="travel-planner">
-      <h2>Travel Planner for {countryName}</h2>
-      <div className="planner-tabs">
-        <button className="tab-button active">Budget</button>
-        <button className="tab-button">Packing List</button>
-        <button className="tab-button">Itinerary</button>
-      </div>
-      <div className="tab-content">
-        <div className="budget-panel">
-          <div className="budget-header">
-            <h3>Trip Budget</h3>
-            <p className="budget-total">To set your budget, save this country to your travel list first.</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
@@ -365,7 +344,7 @@ const DestinationDetail = () => {
 
       <StaticTravelTips countryName={countryName} />
       
-      {status && <StaticBudgetPlanner countryName={countryName} />}
+      {status && <TravelPlanner countryName={countryName} countryCode={id} />}
     </div>
   );
 };
