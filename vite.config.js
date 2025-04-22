@@ -30,9 +30,7 @@ export default defineConfig({
     // Optimize output chunks
     rollupOptions: {
       external: [
-        '@fortawesome/react-fontawesome',
-        '@fortawesome/free-solid-svg-icons',
-        '@fortawesome/fontawesome-svg-core'
+        // FontAwesome dependencies are now included in the bundle
       ],
       output: {
         manualChunks: {
