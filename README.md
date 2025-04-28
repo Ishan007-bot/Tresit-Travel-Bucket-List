@@ -66,7 +66,7 @@ Add screenshots of your application here:
 2. Update the image paths below with your actual screenshot filenames
 -->
 
-![Home Page](./public/screenshots/home.png)
+![Home Page]([./public/screenshots/home.png](https://github.com/Ishan007-bot/Tresit-Travel-Bucket-List/blob/b05852548d1665210d12b0a8047db86fa6248572/home.png))
 ![Explore Countries](./public/screenshots/explore.png)
 ![Country Details](./public/screenshots/details.png)
 ![Travel Log](./public/screenshots/log.png)
