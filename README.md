@@ -67,7 +67,7 @@ Add screenshots of your application here:
 -->
 
 ![Home Page](https://github.com/Ishan007-bot/Tresit-Travel-Bucket-List/blob/b05852548d1665210d12b0a8047db86fa6248572/home.png)
-![Explore Countries](./public/screenshots/explore.png)
+![Explore Countries](https://github.com/Ishan007-bot/Tresit-Travel-Bucket-List/blob/bc019596339115e188609bdff1841015507acf4c/explore.png)
 ![Country Details](./public/screenshots/details.png)
 ![Travel Log](./public/screenshots/log.png)
 
