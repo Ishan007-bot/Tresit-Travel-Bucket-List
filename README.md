@@ -60,18 +60,13 @@ Tresit is a modern web application that helps you track and manage your travel b
 
 ## 📸 Screenshots
 
-<!-- 
-Add screenshots of your application here:
-1. Place screenshot images in the public/screenshots/ directory
-2. Update the image paths below with your actual screenshot filenames
--->
 
 ![Home Page](https://github.com/Ishan007-bot/Tresit-Travel-Bucket-List/blob/b05852548d1665210d12b0a8047db86fa6248572/home.png)
 ![Explore Countries](https://github.com/Ishan007-bot/Tresit-Travel-Bucket-List/blob/bc019596339115e188609bdff1841015507acf4c/explore.png)
 ![Country Details](https://github.com/Ishan007-bot/Tresit-Travel-Bucket-List/blob/03dcf88acac74ebdd8ef4ccd8454bed0eca17190/details.png)
 ![Travel Log](https://github.com/Ishan007-bot/Tresit-Travel-Bucket-List/blob/efde1219144e80031d8d9650b3d113f349bae6f4/log.png)
 
-> Note: Replace the placeholder images above with actual screenshots of your application.
+
 
 ## 🌐 Live Demo
 
